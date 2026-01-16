@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.14 (App de escritorio DEMO)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.14 (App de escritorio DEMO)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.14 (app_de_escritorio_DEMO)" project-jdk-type="Python SDK" />
 </project>
