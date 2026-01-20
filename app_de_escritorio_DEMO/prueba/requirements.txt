@@ -1,0 +1,23 @@
+# Requirements para la aplicación SCORE2
+# Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes
+
+# Base de datos
+# SQLite viene incluido con Python, no requiere instalación adicional
+
+# Interfaz gráfica
+tkcalendar==1.6.1       # Selector de fechas
+pillow==10.1.0           # Manejo de imágenes (para iconos)
+
+# Gráficos y visualización
+matplotlib==3.8.2        # Gráficos estadísticos
+numpy==1.26.2            # Operaciones numéricas
+
+# Reportes y exportación
+openpyxl==3.1.2         # Exportación a Excel
+reportlab==4.0.7        # Generación de PDFs
+
+# Opcional: Para mejorar la apariencia
+# customtkinter==5.2.1  # Interfaz moderna (descomentar si lo deseas)
+
+# Desarrollo
+# pytest==7.4.3         # Para testing (descomentar si lo necesitas)
