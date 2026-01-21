@@ -142,8 +142,24 @@ class SCORE2App:
 
     def crear_tab_calculadora(self):
         """Crea la pestaña de calculadora de riesgo"""
-        # Frame principal con dos columnas
-        main_frame = ttk.Frame(self.tab_calculadora)
+        # Frame principal con dos columnas y scroll
+        canvas = tk.Canvas(self.tab_calculadora)
+        scrollbar = ttk.Scrollbar(self.tab_calculadora, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Frame principal dentro del scrollable
+        main_frame = ttk.Frame(scrollable_frame)
         main_frame.pack(fill='both', expand=True, padx=20, pady=20)
 
         # Columna izquierda: Formulario
@@ -172,29 +188,33 @@ class SCORE2App:
 
         row = 2
 
-        # Edad
-        ttk.Label(left_frame, text="Edad:").grid(row=row, column=0, sticky='w', pady=5)
-        self.var_edad = tk.StringVar()
-        ttk.Entry(left_frame, textvariable=self.var_edad, width=10).grid(
-            row=row, column=1, sticky='w', pady=5)
+        # Fecha de nacimiento (como HeartScore)
+        ttk.Label(left_frame, text="Birth date *", foreground='red').grid(
+            row=row, column=0, sticky='w', pady=5)
+
+        fecha_frame = ttk.Frame(left_frame)
+        fecha_frame.grid(row=row, column=1, sticky='w', pady=5)
+
+        self.var_mes = tk.StringVar()
+        self.var_anio = tk.StringVar()
+
+        ttk.Entry(fecha_frame, textvariable=self.var_mes, width=8).pack(side='left')
+        ttk.Label(fecha_frame, text="/").pack(side='left', padx=2)
+        ttk.Entry(fecha_frame, textvariable=self.var_anio, width=10).pack(side='left')
+        ttk.Label(fecha_frame, text="(month / year)", foreground='gray',
+                 font=('Segoe UI', 8)).pack(side='left', padx=(5, 0))
         row += 1
 
         # Sexo
-        ttk.Label(left_frame, text="Sexo:").grid(row=row, column=0, sticky='w', pady=5)
+        ttk.Label(left_frame, text="Sex *", foreground='red').grid(
+            row=row, column=0, sticky='w', pady=5)
         self.var_sexo = tk.StringVar(value='varon')
         sexo_frame = ttk.Frame(left_frame)
         sexo_frame.grid(row=row, column=1, sticky='w', pady=5)
-        ttk.Radiobutton(sexo_frame, text="Varón", variable=self.var_sexo,
+        ttk.Radiobutton(sexo_frame, text="male", variable=self.var_sexo,
                        value='varon').pack(side='left')
-        ttk.Radiobutton(sexo_frame, text="Mujer", variable=self.var_sexo,
+        ttk.Radiobutton(sexo_frame, text="female", variable=self.var_sexo,
                        value='mujer').pack(side='left', padx=(10, 0))
-        row += 1
-
-        # Fumador
-        ttk.Label(left_frame, text="Fumador:").grid(row=row, column=0, sticky='w', pady=5)
-        self.var_fumador = tk.BooleanVar()
-        ttk.Checkbutton(left_frame, text="Es fumador activo",
-                       variable=self.var_fumador).grid(row=row, column=1, sticky='w', pady=5)
         row += 1
 
         # Parámetros clínicos
@@ -202,33 +222,102 @@ class SCORE2App:
             row=row, column=0, columnspan=2, sticky='ew', pady=10)
         row += 1
 
-        # PAS
-        ttk.Label(left_frame, text="PAS (mmHg):").grid(row=row, column=0, sticky='w', pady=5)
+        # Systolic blood pressure
+        ttk.Label(left_frame, text="Systolic blood pressure *",
+                 foreground='red').grid(row=row, column=0, sticky='w', pady=5)
+        pas_frame = ttk.Frame(left_frame)
+        pas_frame.grid(row=row, column=1, sticky='w', pady=5)
         self.var_pas = tk.StringVar()
-        ttk.Entry(left_frame, textvariable=self.var_pas, width=10).grid(
-            row=row, column=1, sticky='w', pady=5)
-        ttk.Label(left_frame, text="(100-179)", foreground='gray').grid(
-            row=row, column=1, sticky='e', pady=5)
+        ttk.Entry(pas_frame, textvariable=self.var_pas, width=10).pack(side='left')
+        ttk.Label(pas_frame, text="mmHg", foreground='gray').pack(side='left', padx=(5, 0))
         row += 1
 
-        # Colesterol no-HDL
-        ttk.Label(left_frame, text="Col. no-HDL (mmol/L):").grid(
-            row=row, column=0, sticky='w', pady=5)
-        self.var_col = tk.StringVar()
-        ttk.Entry(left_frame, textvariable=self.var_col, width=10).grid(
-            row=row, column=1, sticky='w', pady=5)
-        ttk.Label(left_frame, text="(3.0-7.0)", foreground='gray').grid(
-            row=row, column=1, sticky='e', pady=5)
+        # Total Cholesterol con selector de unidades
+        ttk.Label(left_frame, text="Total Cholesterol *",
+                 foreground='red').grid(row=row, column=0, sticky='w', pady=5)
+        col_total_frame = ttk.Frame(left_frame)
+        col_total_frame.grid(row=row, column=1, sticky='w', pady=5)
+
+        self.var_col_total = tk.StringVar()
+        ttk.Entry(col_total_frame, textvariable=self.var_col_total, width=10).pack(side='left')
+
+        self.var_col_total_unidad = tk.StringVar(value='mmol/L')
+        ttk.Radiobutton(col_total_frame, text="mmol/L",
+                       variable=self.var_col_total_unidad,
+                       value='mmol/L').pack(side='left', padx=(10, 0))
+        ttk.Radiobutton(col_total_frame, text="mg/dl",
+                       variable=self.var_col_total_unidad,
+                       value='mg/dl').pack(side='left')
+        row += 1
+
+        # HDL-Cholesterol
+        ttk.Label(left_frame, text="HDL-Cholesterol *",
+                 foreground='red').grid(row=row, column=0, sticky='w', pady=5)
+        hdl_frame = ttk.Frame(left_frame)
+        hdl_frame.grid(row=row, column=1, sticky='w', pady=5)
+        self.var_hdl = tk.StringVar()
+        ttk.Entry(hdl_frame, textvariable=self.var_hdl, width=10).pack(side='left')
+        ttk.Label(hdl_frame, text="mmol/L", foreground='gray').pack(side='left', padx=(5, 0))
+        row += 1
+
+        # LDL-Cholesterol (opcional)
+        ttk.Label(left_frame, text="LDL-Cholesterol",
+                 foreground='gray').grid(row=row, column=0, sticky='w', pady=5)
+        ldl_frame = ttk.Frame(left_frame)
+        ldl_frame.grid(row=row, column=1, sticky='w', pady=5)
+        self.var_ldl = tk.StringVar()
+        ttk.Entry(ldl_frame, textvariable=self.var_ldl, width=10).pack(side='left')
+        ttk.Label(ldl_frame, text="mmol/L", foreground='gray').pack(side='left', padx=(5, 0))
+        row += 1
+
+        # Current Smoker
+        ttk.Label(left_frame, text="Current Smoker *",
+                 foreground='red').grid(row=row, column=0, sticky='w', pady=5)
+        self.var_fumador = tk.BooleanVar()
+        fumador_frame = ttk.Frame(left_frame)
+        fumador_frame.grid(row=row, column=1, sticky='w', pady=5)
+        ttk.Radiobutton(fumador_frame, text="Yes", variable=self.var_fumador,
+                       value=True).pack(side='left')
+        ttk.Radiobutton(fumador_frame, text="No", variable=self.var_fumador,
+                       value=False).pack(side='left', padx=(10, 0))
         row += 1
 
         # Región de riesgo
-        ttk.Label(left_frame, text="Región de Riesgo:").grid(
+        ttk.Separator(left_frame, orient='horizontal').grid(
+            row=row, column=0, columnspan=2, sticky='ew', pady=10)
+        row += 1
+
+        ttk.Label(left_frame, text="Región de Riesgo:", font=('Segoe UI', 10, 'bold')).grid(
             row=row, column=0, sticky='w', pady=5)
-        self.var_region = tk.StringVar(value='moderado')
+        self.var_region = tk.StringVar(value='bajo')  # BAJO por defecto (Argentina)
         region_combo = ttk.Combobox(left_frame, textvariable=self.var_region,
-                                   values=['moderado', 'muy_alto'],
+                                   values=['bajo', 'moderado', 'muy_alto'],
                                    state='readonly', width=20)
         region_combo.grid(row=row, column=1, sticky='w', pady=5)
+        row += 1
+
+        # Nota sobre la región
+        nota_region = tk.Frame(left_frame, bg='#fff3cd', relief=tk.RIDGE, borderwidth=1)
+        nota_region.grid(row=row, column=0, columnspan=2, sticky='ew', pady=5, padx=5)
+
+        tk.Label(nota_region,
+                text="💡 Argentina = Región BAJO RIESGO (según ESC 2021)",
+                bg='#fff3cd', font=('Segoe UI', 8, 'bold'),
+                foreground='#856404').pack(anchor='w', padx=10, pady=5)
+        row += 1
+
+        # Nota informativa sobre no-HDL
+        info_frame = tk.Frame(left_frame, bg='#e3f2fd', relief=tk.RIDGE, borderwidth=1)
+        info_frame.grid(row=row, column=0, columnspan=2, sticky='ew', pady=10, padx=5)
+
+        tk.Label(info_frame,
+                text="ℹ️ El colesterol no-HDL se calcula automáticamente:",
+                bg='#e3f2fd', font=('Segoe UI', 9, 'bold'),
+                foreground='#1976d2').pack(anchor='w', padx=10, pady=(5, 0))
+        tk.Label(info_frame,
+                text="no-HDL = Total Cholesterol - HDL",
+                bg='#e3f2fd', font=('Segoe UI', 8, 'italic'),
+                foreground='#424242').pack(anchor='w', padx=20, pady=(0, 5))
         row += 1
 
         # Datos adicionales (opcionales)
@@ -237,7 +326,7 @@ class SCORE2App:
         row += 1
 
         ttk.Label(left_frame, text="Datos Adicionales (opcional)",
-                 font=('Segoe UI', 9, 'italic')).grid(
+                 font=('Segoe UI', 9, 'italic'), foreground='gray').grid(
             row=row, column=0, columnspan=2, sticky='w', pady=5)
         row += 1
 
@@ -255,17 +344,23 @@ class SCORE2App:
         row += 1
 
         # Botón calcular
-        ttk.Button(left_frame, text="🔄 CALCULAR RIESGO",
+        ttk.Button(left_frame, text="📊 CALCULATE RISK",
                   command=self.calcular_riesgo_click,
                   style='Primary.TButton').grid(
             row=row, column=0, columnspan=2, sticky='ew', pady=20)
         row += 1
 
         # Botón guardar
-        ttk.Button(left_frame, text="💾 GUARDAR CÁLCULO",
+        ttk.Button(left_frame, text="💾 SAVE CALCULATION",
                   command=self.guardar_calculo,
                   style='Success.TButton').grid(
             row=row, column=0, columnspan=2, sticky='ew')
+        row += 1
+
+        # Recordatorio de campos requeridos
+        ttk.Label(left_frame, text="* Campos requeridos / Required fields",
+                 font=('Segoe UI', 8), foreground='red').grid(
+            row=row, column=0, columnspan=2, sticky='w', pady=(10, 0))
 
         # Columna derecha: Resultados
         right_frame = ttk.LabelFrame(main_frame, text="Resultado del Cálculo", padding=20)
@@ -420,28 +515,86 @@ class SCORE2App:
     def calcular_riesgo_click(self):
         """Calcula el riesgo cardiovascular al hacer clic"""
         try:
-            # Validar campos
-            edad = int(self.var_edad.get())
+            # Validar y calcular edad desde fecha de nacimiento
+            mes = self.var_mes.get()
+            anio = self.var_anio.get()
+
+            if not mes or not anio:
+                messagebox.showerror("Error", "Por favor ingrese la fecha de nacimiento (mes/año)")
+                return
+
+            # Calcular edad actual
+            from datetime import date
+            hoy = date.today()
+            anio_nac = int(anio)
+            mes_nac = int(mes)
+
+            edad = hoy.year - anio_nac
+            if hoy.month < mes_nac:
+                edad -= 1
+
+            # Validar otros campos requeridos
+            if not self.var_pas.get():
+                messagebox.showerror("Error", "Por favor ingrese la presión arterial sistólica")
+                return
+
+            if not self.var_col_total.get():
+                messagebox.showerror("Error", "Por favor ingrese el colesterol total")
+                return
+
+            if not self.var_hdl.get():
+                messagebox.showerror("Error", "Por favor ingrese el HDL-Cholesterol")
+                return
+
+            # Obtener valores
             pas = int(self.var_pas.get())
-            col = float(self.var_col.get())
+            col_total = float(self.var_col_total.get())
+            hdl = float(self.var_hdl.get())
             sexo = self.var_sexo.get()
             fumador = self.var_fumador.get()
             region = self.var_region.get()
+
+            # Convertir colesterol total a mmol/L si está en mg/dl
+            if self.var_col_total_unidad.get() == 'mg/dl':
+                col_total = col_total / 38.67
+
+            # Calcular colesterol no-HDL (como HeartScore)
+            col_no_hdl = col_total - hdl
+
+            # Validar rangos
+            if col_no_hdl < 3.0 or col_no_hdl > 7.0:
+                messagebox.showwarning(
+                    "Advertencia",
+                    f"El colesterol no-HDL calculado ({col_no_hdl:.2f} mmol/L) está fuera del rango válido (3.0-7.0).\n\n"
+                    f"Colesterol Total: {col_total:.2f} mmol/L\n"
+                    f"HDL: {hdl:.2f} mmol/L\n"
+                    f"No-HDL = Total - HDL = {col_no_hdl:.2f} mmol/L"
+                )
+                # Continuar de todas formas para mostrar el cálculo
 
             # Debug: Mostrar valores en consola
             print(f"\n{'='*60}")
             print(f"CÁLCULO DE RIESGO - DEBUG")
             print(f"{'='*60}")
-            print(f"Edad: {edad} años")
+            print(f"Fecha nacimiento: {mes}/{anio}")
+            print(f"Edad calculada: {edad} años")
             print(f"Sexo: {sexo}")
             print(f"Fumador: {'Sí' if fumador else 'No'}")
             print(f"PAS: {pas} mmHg")
-            print(f"Col no-HDL: {col} mmol/L")
+            print(f"Colesterol Total: {col_total:.2f} mmol/L")
+            print(f"HDL-Cholesterol: {hdl:.2f} mmol/L")
+            print(f"Colesterol no-HDL (calculado): {col_no_hdl:.2f} mmol/L")
             print(f"Región: {region}")
             print(f"{'='*60}")
 
             # Calcular riesgo
-            resultado = calcular_riesgo(edad, sexo, fumador, pas, col, region)
+            resultado = calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region)
+
+            # Agregar información adicional al resultado
+            resultado['edad'] = edad
+            resultado['col_total'] = col_total
+            resultado['hdl'] = hdl
+            resultado['col_no_hdl'] = col_no_hdl
 
             print(f"RESULTADO: {resultado}")
             print(f"{'='*60}\n")
@@ -455,7 +608,7 @@ class SCORE2App:
             self.resultado_actual = resultado
 
         except ValueError as e:
-            messagebox.showerror("Error", "Por favor ingrese valores numéricos válidos")
+            messagebox.showerror("Error", f"Por favor ingrese valores numéricos válidos.\n\nDetalle: {str(e)}")
             print(f"Error de validación: {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Error al calcular: {str(e)}")
@@ -501,10 +654,27 @@ class SCORE2App:
         detalles_frame = ttk.LabelFrame(self.resultado_frame, text="Detalles", padding=20)
         detalles_frame.pack(fill='x', padx=20, pady=10)
 
+        ttk.Label(detalles_frame, text=f"Edad: {resultado.get('edad', 'N/A')} años",
+                 font=('Segoe UI', 10)).pack(anchor='w')
         ttk.Label(detalles_frame, text=f"Método: {resultado['score_type']}",
                  font=('Segoe UI', 10)).pack(anchor='w')
         ttk.Label(detalles_frame, text=f"Región: {resultado['region']}",
                  font=('Segoe UI', 10)).pack(anchor='w')
+
+        # Mostrar valores de colesterol
+        if 'col_total' in resultado:
+            ttk.Separator(detalles_frame, orient='horizontal').pack(fill='x', pady=10)
+            ttk.Label(detalles_frame, text="Valores de Colesterol:",
+                     font=('Segoe UI', 10, 'bold')).pack(anchor='w')
+            ttk.Label(detalles_frame,
+                     text=f"• Total: {resultado['col_total']:.2f} mmol/L",
+                     font=('Segoe UI', 9)).pack(anchor='w', padx=(10, 0))
+            ttk.Label(detalles_frame,
+                     text=f"• HDL: {resultado['hdl']:.2f} mmol/L",
+                     font=('Segoe UI', 9)).pack(anchor='w', padx=(10, 0))
+            ttk.Label(detalles_frame,
+                     text=f"• no-HDL: {resultado['col_no_hdl']:.2f} mmol/L",
+                     font=('Segoe UI', 9), foreground='blue').pack(anchor='w', padx=(10, 0))
 
         # Interpretación
         interp_frame = ttk.LabelFrame(self.resultado_frame, text="Interpretación", padding=15)
@@ -539,16 +709,19 @@ class SCORE2App:
         try:
             datos_calculo = {
                 'paciente_id': self.paciente_actual,
-                'edad': int(self.var_edad.get()),
+                'edad': self.resultado_actual.get('edad'),
                 'fumador': self.var_fumador.get(),
                 'pas': int(self.var_pas.get()),
-                'colesterol_no_hdl': float(self.var_col.get()),
+                'colesterol_no_hdl': self.resultado_actual.get('col_no_hdl'),
                 'region': self.var_region.get(),
                 'riesgo_porcentaje': self.resultado_actual['riesgo'],
                 'categoria': self.resultado_actual['categoria'],
                 'score_type': self.resultado_actual['score_type'],
                 'peso': float(self.var_peso.get()) if self.var_peso.get() else None,
-                'altura': float(self.var_altura.get()) if self.var_altura.get() else None
+                'altura': float(self.var_altura.get()) if self.var_altura.get() else None,
+                'colesterol_total': self.resultado_actual.get('col_total'),
+                'hdl': self.resultado_actual.get('hdl'),
+                'ldl': float(self.var_ldl.get()) if self.var_ldl.get() else None
             }
 
             # Calcular IMC si hay datos
@@ -565,6 +738,8 @@ class SCORE2App:
 
         except Exception as e:
             messagebox.showerror("Error", f"Error al guardar: {str(e)}")
+            import traceback
+            traceback.print_exc()
 
     # ========================================================================
     # MÉTODOS DE GESTIÓN DE PACIENTES
@@ -612,10 +787,15 @@ class SCORE2App:
                 paciente = pacientes[0]
                 self.paciente_actual = paciente[0]
 
-                # Cargar datos en el formulario
+                # Cargar fecha de nacimiento en formato mes/año
                 if paciente[4]:  # fecha_nacimiento
-                    edad = self.calcular_edad(paciente[4])
-                    self.var_edad.set(str(edad))
+                    from datetime import datetime
+                    try:
+                        fecha_nac = datetime.strptime(paciente[4], '%Y-%m-%d')
+                        self.var_mes.set(str(fecha_nac.month))
+                        self.var_anio.set(str(fecha_nac.year))
+                    except:
+                        pass
 
                 self.var_sexo.set(paciente[5])
 
@@ -642,16 +822,24 @@ class SCORE2App:
         """Elimina un paciente (lógicamente)"""
         seleccion = self.tree_pacientes.selection()
         if not seleccion:
-            messagebox.showwarning("Advertencia", "Seleccione un paciente")
+            messagebox.showwarning("Advertencia", "Por favor seleccione un paciente de la lista")
             return
 
-        if messagebox.askyesno("Confirmar", "¿Está seguro de eliminar este paciente?"):
+        respuesta = messagebox.askyesno(
+            "Confirmar Eliminación",
+            "¿Está seguro de que desea eliminar este paciente?\n\n"
+            "Nota: La eliminación es lógica (el paciente se marca como inactivo pero no se borra de la base de datos)"
+        )
+
+        if respuesta:
             item = self.tree_pacientes.item(seleccion[0])
             paciente_id = item['values'][0]
 
-            if self.db.eliminar_paciente(paciente_id):
-                messagebox.showinfo("Éxito", "Paciente eliminado")
+            if self.db.eliminar_paciente(paciente_id, soft_delete=True):
+                messagebox.showinfo("Éxito", "Paciente eliminado correctamente")
                 self.actualizar_lista_pacientes()
+            else:
+                messagebox.showerror("Error", "No se pudo eliminar el paciente")
 
     # ========================================================================
     # MÉTODOS DE ESTADÍSTICAS

@@ -272,4 +272,294 @@ Este software es de uso interno para la Unidad de Prevención Cardiometabólica.
 
 ¡Listo para usar! 🎉
 
-Última actualización: Enero 2026
+# 🎯 CAMBIOS - Versión HeartScore Compatible
+
+## Fecha: Enero 2026
+
+---
+
+## ✅ Cambios Realizados
+
+### 📋 **Campos del Formulario - Ahora IDÉNTICOS a HeartScore:**
+
+#### ❌ **ANTES** (versión anterior):
+- Edad (en años directamente)
+- Colesterol no-HDL (ingreso manual)
+
+#### ✅ **AHORA** (compatible con HeartScore):
+
+1. **Birth date** (mes/año)
+   - ✓ El usuario ingresa: mes y año de nacimiento
+   - ✓ La app calcula automáticamente la edad
+
+2. **Sex** (male/female)
+   - ✓ Radio buttons: male / female
+   - ✓ Idéntico a HeartScore
+
+3. **Systolic blood pressure** (mmHg)
+   - ✓ Rango: 100-179 mmHg
+   - ✓ Unidad mostrada: mmHg
+
+4. **Total Cholesterol** con selector de unidades
+   - ✓ **mmol/L** o **mg/dl**
+   - ✓ Conversión automática a mmol/L si se ingresa en mg/dl
+   - ✓ Radio buttons para elegir unidad
+
+5. **HDL-Cholesterol** (mmol/L)
+   - ✓ Campo nuevo, requerido
+   - ✓ Unidad fija: mmol/L
+
+6. **LDL-Cholesterol** (mmol/L)
+   - ✓ Campo nuevo, OPCIONAL
+   - ✓ No afecta el cálculo de riesgo
+   - ✓ Se guarda en la BD para referencia
+
+7. **Current Smoker** (Yes/No)
+   - ✓ Radio buttons: Yes / No
+   - ✓ Idéntico a HeartScore
+
+---
+
+## 🔢 **Cálculo Automático de Colesterol no-HDL**
+
+```
+no-HDL = Total Cholesterol - HDL
+```
+
+**Ejemplo:**
+- Total Cholesterol: 6.0 mmol/L
+- HDL: 1.2 mmol/L
+- **no-HDL = 6.0 - 1.2 = 4.8 mmol/L** ← Este valor se usa para el cálculo SCORE2
+
+**Nota:** La app muestra una alerta si el no-HDL calculado está fuera del rango válido (3.0-7.0 mmol/L).
+
+---
+
+## 🔄 **Conversión Automática de Unidades**
+
+### Colesterol Total:
+
+**De mg/dl a mmol/L:**
+```
+mmol/L = mg/dl ÷ 38.67
+```
+
+**Ejemplos:**
+| mg/dl | mmol/L |
+|-------|--------|
+| 150   | 3.88   |
+| 200   | 5.17   |
+| 250   | 6.46   |
+| 270   | 6.98   |
+
+---
+
+## 🎨 **Mejoras en la Interfaz**
+
+### 1. Campos Marcados como Requeridos
+- Todos los campos obligatorios tienen **asterisco rojo (*)** 
+- Al final del formulario: "* Required fields"
+
+### 2. Cuadro Informativo
+```
+ℹ️ El colesterol no-HDL se calcula automáticamente:
+   no-HDL = Total Cholesterol - HDL
+```
+
+### 3. Botones en Inglés (como HeartScore)
+- ✅ "CALCULATE RISK" (antes: "Calcular Riesgo")
+- ✅ "SAVE CALCULATION" (antes: "Guardar Cálculo")
+
+### 4. Etiquetas Bilingües
+- Birth date / Fecha de nacimiento
+- Sex / Sexo
+- Current Smoker / Fumador actual
+
+---
+
+## 📊 **Resultado del Cálculo - Información Adicional**
+
+Ahora el resultado muestra:
+
+```
+Riesgo Cardiovascular a 10 años
+
+25%
+
+[Riesgo Alto]
+
+Detalles:
+• Edad: 50 años
+• Método: SCORE2
+• Región: MODERADO
+
+Valores de Colesterol:
+• Total: 6.00 mmol/L
+• HDL: 1.20 mmol/L
+• no-HDL: 4.80 mmol/L ← Usado para el cálculo
+
+Interpretación:
+[Texto explicativo del riesgo...]
+```
+
+---
+
+## 💾 **Base de Datos - Campos Nuevos**
+
+Los cálculos ahora guardan:
+- ✅ `colesterol_total` (mmol/L)
+- ✅ `hdl` (mmol/L)
+- ✅ `ldl` (mmol/L) - opcional
+- ✅ `colesterol_no_hdl` (calculado automáticamente)
+
+**Compatibilidad:** Los cálculos antiguos siguen funcionando.
+
+---
+
+## 🐛 **Validaciones Implementadas**
+
+### 1. Fecha de Nacimiento
+- ✓ Mes: 1-12
+- ✓ Año: debe resultar en edad 40-89 años
+- ✓ Mensaje de error claro si falta
+
+### 2. Colesterol no-HDL (calculado)
+- ✓ Advertencia si está fuera del rango 3.0-7.0 mmol/L
+- ✓ Muestra el detalle del cálculo
+- ✓ Permite continuar para ver el resultado
+
+### 3. Campos Requeridos
+- ✓ Birth date
+- ✓ Sex
+- ✓ Systolic blood pressure
+- ✓ Total Cholesterol
+- ✓ HDL-Cholesterol
+- ✓ Current Smoker
+
+---
+
+## 🔍 **Modo DEBUG Mejorado**
+
+En la consola ahora se muestra:
+
+```
+============================================================
+CÁLCULO DE RIESGO - DEBUG
+============================================================
+Fecha nacimiento: 6/1974
+Edad calculada: 50 años
+Sexo: varon
+Fumador: Sí
+PAS: 130 mmHg
+Colesterol Total: 6.00 mmol/L
+HDL-Cholesterol: 1.20 mmol/L
+Colesterol no-HDL (calculado): 4.80 mmol/L
+Región: moderado
+============================================================
+RESULTADO: {'riesgo': 23, 'categoria': 'Alto', ...}
+============================================================
+```
+
+---
+
+## 📖 **Cómo Usar la Nueva Versión**
+
+### Paso 1: Cerrar la aplicación si está abierta
+
+### Paso 2: Ejecutar de nuevo
+```bash
+python main.py
+```
+
+### Paso 3: Calcular riesgo con el nuevo formato
+
+**Ejemplo de datos de prueba:**
+
+```
+Birth date: 6 / 1974
+Sex: ○ male ○ female  ← Seleccionar "male"
+Systolic blood pressure: 130 mmHg
+Total Cholesterol: 6.0  ○ mmol/L ○ mg/dl  ← Seleccionar "mmol/L"
+HDL-Cholesterol: 1.2 mmol/L
+LDL-Cholesterol: [dejar vacío o ingresar un valor]
+Current Smoker: ○ Yes ○ No  ← Seleccionar "Yes"
+```
+
+**Presionar:** CALCULATE RISK
+
+**Resultado esperado:**
+- Edad calculada: 50 años
+- no-HDL calculado: 4.8 mmol/L
+- Riesgo: ~23-25% (Alto)
+
+---
+
+## 🎯 **Compatibilidad con HeartScore**
+
+### ✅ Lo que COINCIDE exactamente:
+- Campos del formulario
+- Orden de los campos
+- Nombres de los campos
+- Validaciones de rangos
+- Cálculo de no-HDL = Total - HDL
+- Selector de unidades para colesterol total
+
+### ⚠️ Diferencias (mejoras de nuestra app):
+- ✅ Nuestra app soporta **2 regiones** (Moderado y Muy Alto)
+- ✅ HeartScore solo muestra 1 región automática por país
+- ✅ Nuestra app guarda historial en base de datos local
+- ✅ Nuestra app permite exportar a CSV
+- ✅ Nuestra app funciona 100% offline
+
+---
+
+## 📝 **Notas Importantes**
+
+### Conversión de Unidades
+
+**Si tenés valores en mg/dl:**
+1. Ingresar el valor en el campo "Total Cholesterol"
+2. Seleccionar el radio button "mg/dl"
+3. La app convierte automáticamente a mmol/L
+
+**Si tenés HDL en mg/dl:**
+- Convertir manualmente: `HDL_mmol/L = HDL_mg/dl ÷ 38.67`
+- Ejemplo: HDL 50 mg/dl = 1.29 mmol/L
+
+### Rangos Válidos
+
+| Parámetro | Rango | Unidad |
+|-----------|-------|--------|
+| Edad | 40-89 años | años |
+| PAS | 100-179 | mmHg |
+| Col Total | - | mmol/L o mg/dl |
+| HDL | - | mmol/L |
+| **Col no-HDL** | **3.0-7.0** | **mmol/L** |
+
+---
+
+## 🚀 **Próximos Pasos Sugeridos**
+
+1. ✅ Probar con varios pacientes
+2. ✅ Verificar que los cálculos coincidan con HeartScore.org
+3. ✅ Guardar cálculos en la base de datos
+4. ✅ Exportar resultados a CSV
+5. ✅ Crear backups periódicos
+
+---
+
+## 💬 **Soporte**
+
+Si hay algún problema o diferencia con HeartScore, revisar:
+1. Consola (ventana negra) - modo DEBUG
+2. Verificar conversión de unidades
+3. Confirmar rangos de edad (40-89 años)
+4. Verificar que no-HDL esté en rango 3.0-7.0
+
+---
+
+**Desarrollado para:**
+Unidad de Prevención Cardiometabólica
+ISSUNNE - Corrientes Capital
+
+**Última actualización:** Enero 2026

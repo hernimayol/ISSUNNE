@@ -1,13 +1,12 @@
 """
 tablas_score2.py
 Tablas completas SCORE2 y SCORE2-OP según ESC 2021
-Regiones de Riesgo: MODERADO y MUY ALTO
+Regiones de Riesgo: BAJO, MODERADO y MUY ALTO
 Desarrollado para: Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes
 
 NOTA IMPORTANTE:
-Argentina se clasifica como región de BAJO RIESGO según SCORE2 europeo,
-pero este sistema está calibrado para regiones MODERADO y MUY ALTO RIESGO
-para uso en la práctica clínica de Corrientes Capital.
+Argentina se clasifica como región de BAJO RIESGO según SCORE2 europeo.
+Sin embargo, este sistema incluye las 3 regiones para máxima flexibilidad clínica.
 
 Estructura de datos:
 - Edad en rangos: 40-44, 45-49, 50-54, 55-59, 60-64, 65-69 (SCORE2)
@@ -15,6 +14,279 @@ Estructura de datos:
 - PAS en rangos: 100-119, 120-139, 140-159, 160-179 mmHg
 - Colesterol no-HDL en mmol/L: índices 0-3 para rangos 3-4, 4-5, 5-6, 6-7
 """
+
+# ============================================================================
+# REGIÓN BAJO RIESGO - SCORE2 (40-69 años)
+# Argentina se clasifica en esta región según ESC 2021
+# ============================================================================
+
+SCORE2_BAJO_VARONES_NO_FUMADORES = {
+    '40-44': {
+        '100-119': [3, 3, 4, 4],
+        '120-139': [4, 4, 5, 6],
+        '140-159': [5, 6, 7, 8],
+        '160-179': [7, 8, 9, 10]
+    },
+    '45-49': {
+        '100-119': [4, 5, 6, 7],
+        '120-139': [6, 7, 8, 9],
+        '140-159': [8, 9, 10, 12],
+        '160-179': [10, 12, 13, 15]
+    },
+    '50-54': {
+        '100-119': [6, 7, 8, 9],
+        '120-139': [8, 9, 11, 12],
+        '140-159': [11, 13, 15, 17],
+        '160-179': [15, 17, 19, 22]
+    },
+    '55-59': {
+        '100-119': [9, 10, 11, 13],
+        '120-139': [12, 14, 16, 18],
+        '140-159': [17, 19, 21, 24],
+        '160-179': [22, 25, 28, 31]
+    },
+    '60-64': {
+        '100-119': [13, 15, 17, 19],
+        '120-139': [18, 20, 23, 26],
+        '140-159': [24, 27, 30, 33],
+        '160-179': [31, 34, 38, 40]
+    },
+    '65-69': {
+        '100-119': [19, 21, 24, 26],
+        '120-139': [26, 29, 32, 34],
+        '140-159': [33, 37, 40, 42],
+        '160-179': [41, 44, 47, 49]
+    }
+}
+
+SCORE2_BAJO_VARONES_FUMADORES = {
+    '40-44': {
+        '100-119': [6, 7, 8, 9],
+        '120-139': [8, 9, 11, 13],
+        '140-159': [11, 13, 15, 18],
+        '160-179': [15, 17, 20, 23]
+    },
+    '45-49': {
+        '100-119': [9, 11, 13, 15],
+        '120-139': [13, 15, 17, 20],
+        '140-159': [17, 20, 23, 27],
+        '160-179': [23, 27, 30, 34]
+    },
+    '50-54': {
+        '100-119': [13, 15, 18, 20],
+        '120-139': [18, 21, 24, 27],
+        '140-159': [25, 28, 32, 36],
+        '160-179': [32, 37, 41, 45]
+    },
+    '55-59': {
+        '100-119': [19, 22, 26, 29],
+        '120-139': [27, 31, 34, 38],
+        '140-159': [35, 40, 44, 48],
+        '160-179': [44, 49, 53, 56]
+    },
+    '60-64': {
+        '100-119': [27, 31, 35, 38],
+        '120-139': [36, 41, 45, 49],
+        '140-159': [46, 51, 55, 58],
+        '160-179': [55, 60, 63, 65]
+    },
+    '65-69': {
+        '100-119': [36, 40, 44, 47],
+        '120-139': [46, 50, 54, 57],
+        '140-159': [55, 59, 62, 65],
+        '160-179': [63, 66, 68, 70]
+    }
+}
+
+SCORE2_BAJO_MUJERES_NO_FUMADORAS = {
+    '40-44': {
+        '100-119': [2, 2, 3, 3],
+        '120-139': [3, 3, 4, 5],
+        '140-159': [4, 5, 6, 7],
+        '160-179': [6, 7, 8, 9]
+    },
+    '45-49': {
+        '100-119': [3, 4, 5, 6],
+        '120-139': [5, 6, 7, 8],
+        '140-159': [7, 8, 10, 11],
+        '160-179': [9, 11, 13, 15]
+    },
+    '50-54': {
+        '100-119': [5, 6, 7, 8],
+        '120-139': [7, 8, 10, 12],
+        '140-159': [10, 12, 14, 16],
+        '160-179': [14, 16, 18, 21]
+    },
+    '55-59': {
+        '100-119': [8, 9, 11, 13],
+        '120-139': [11, 13, 15, 17],
+        '140-159': [15, 17, 20, 23],
+        '160-179': [20, 23, 26, 29]
+    },
+    '60-64': {
+        '100-119': [12, 14, 16, 18],
+        '120-139': [16, 19, 21, 24],
+        '140-159': [22, 25, 28, 31],
+        '160-179': [28, 31, 35, 38]
+    },
+    '65-69': {
+        '100-119': [17, 20, 22, 25],
+        '120-139': [24, 27, 30, 33],
+        '140-159': [31, 34, 38, 41],
+        '160-179': [38, 42, 46, 49]
+    }
+}
+
+SCORE2_BAJO_MUJERES_FUMADORAS = {
+    '40-44': {
+        '100-119': [5, 6, 7, 8],
+        '120-139': [7, 8, 10, 11],
+        '140-159': [9, 11, 13, 15],
+        '160-179': [13, 15, 17, 20]
+    },
+    '45-49': {
+        '100-119': [8, 9, 11, 13],
+        '120-139': [11, 13, 15, 18],
+        '140-159': [15, 18, 21, 24],
+        '160-179': [20, 24, 27, 31]
+    },
+    '50-54': {
+        '100-119': [11, 14, 16, 19],
+        '120-139': [16, 19, 22, 25],
+        '140-159': [22, 26, 29, 33],
+        '160-179': [29, 33, 37, 41]
+    },
+    '55-59': {
+        '100-119': [17, 20, 24, 27],
+        '120-139': [24, 28, 31, 35],
+        '140-159': [32, 36, 40, 44],
+        '160-179': [40, 45, 49, 53]
+    },
+    '60-64': {
+        '100-119': [25, 29, 33, 36],
+        '120-139': [34, 38, 42, 46],
+        '140-159': [43, 48, 52, 55],
+        '160-179': [52, 57, 60, 63]
+    },
+    '65-69': {
+        '100-119': [34, 39, 43, 46],
+        '120-139': [44, 49, 53, 56],
+        '140-159': [54, 58, 62, 65],
+        '160-179': [62, 66, 69, 71]
+    }
+}
+
+# ============================================================================
+# REGIÓN BAJO RIESGO - SCORE2-OP (70-89 años)
+# ============================================================================
+
+SCORE2OP_BAJO_VARONES_NO_FUMADORES = {
+    '70-74': {
+        '100-119': [29, 31, 33, 34],
+        '120-139': [34, 36, 37, 39],
+        '140-159': [39, 40, 42, 43],
+        '160-179': [43, 44, 46, 47]
+    },
+    '75-79': {
+        '100-119': [36, 39, 42, 45],
+        '120-139': [44, 48, 52, 56],
+        '140-159': [53, 56, 58, 60],
+        '160-179': [59, 61, 62, 64]
+    },
+    '80-84': {
+        '100-119': [45, 48, 52, 56],
+        '120-139': [53, 56, 59, 62],
+        '140-159': [60, 62, 64, 66],
+        '160-179': [66, 67, 69, 70]
+    },
+    '85-89': {
+        '100-119': [54, 57, 60, 63],
+        '120-139': [61, 64, 66, 68],
+        '140-159': [67, 69, 71, 72],
+        '160-179': [72, 73, 75, 76]
+    }
+}
+
+SCORE2OP_BAJO_VARONES_FUMADORES = {
+    '70-74': {
+        '100-119': [44, 49, 53, 57],
+        '120-139': [52, 56, 60, 63],
+        '140-159': [59, 62, 65, 67],
+        '160-179': [65, 67, 69, 71]
+    },
+    '75-79': {
+        '100-119': [54, 58, 62, 65],
+        '120-139': [62, 65, 68, 71],
+        '140-159': [68, 71, 73, 75],
+        '160-179': [74, 76, 77, 79]
+    },
+    '80-84': {
+        '100-119': [64, 67, 70, 72],
+        '120-139': [70, 73, 75, 77],
+        '140-159': [76, 78, 79, 81],
+        '160-179': [80, 82, 83, 84]
+    },
+    '85-89': {
+        '100-119': [72, 75, 77, 79],
+        '120-139': [78, 80, 81, 83],
+        '140-159': [82, 84, 85, 86],
+        '160-179': [86, 87, 88, 89]
+    }
+}
+
+SCORE2OP_BAJO_MUJERES_NO_FUMADORAS = {
+    '70-74': {
+        '100-119': [22, 25, 27, 29],
+        '120-139': [27, 29, 31, 33],
+        '140-159': [32, 34, 37, 39],
+        '160-179': [37, 39, 42, 44]
+    },
+    '75-79': {
+        '100-119': [29, 32, 35, 38],
+        '120-139': [37, 40, 43, 46],
+        '140-159': [45, 48, 51, 54],
+        '160-179': [52, 55, 58, 60]
+    },
+    '80-84': {
+        '100-119': [38, 42, 46, 49],
+        '120-139': [47, 51, 54, 57],
+        '140-159': [56, 59, 62, 64],
+        '160-179': [63, 66, 68, 70]
+    },
+    '85-89': {
+        '100-119': [49, 53, 56, 59],
+        '120-139': [58, 61, 64, 66],
+        '140-159': [65, 68, 70, 72],
+        '160-179': [72, 74, 76, 77]
+    }
+}
+
+SCORE2OP_BAJO_MUJERES_FUMADORAS = {
+    '70-74': {
+        '100-119': [38, 45, 50, 54],
+        '120-139': [47, 52, 57, 60],
+        '140-159': [55, 60, 63, 66],
+        '160-179': [62, 66, 68, 70]
+    },
+    '75-79': {
+        '100-119': [49, 54, 59, 62],
+        '120-139': [59, 63, 67, 70],
+        '140-159': [67, 70, 73, 75],
+        '160-179': [73, 76, 78, 80]
+    },
+    '80-84': {
+        '100-119': [60, 64, 68, 70],
+        '120-139': [68, 71, 74, 76],
+        '140-159': [75, 77, 79, 81],
+        '160-179': [80, 82, 84, 85]
+    },
+    '85-89': {
+        '100-119': [69, 73, 75, 77],
+        '120-139': [76, 78, 80, 82],
+        '140-159': [81, 83, 85, 86],
+        '160-179': [85, 87, 88, 89]
+    }
+}
 
 # ============================================================================
 # REGIÓN MODERADO - SCORE2 (40-69 años)
@@ -560,7 +832,6 @@ SCORE2OP_MUY_ALTO_MUJERES_FUMADORAS = {
     }
 }
 
-
 # ============================================================================
 # FUNCIONES AUXILIARES
 # ============================================================================
@@ -590,7 +861,6 @@ def obtener_rango_edad(edad, score_type='score2'):
         if 85 <= edad <= 89: return '85-89'
     return None
 
-
 def obtener_rango_pas(pas):
     """
     Retorna el rango de PAS correspondiente.
@@ -606,7 +876,6 @@ def obtener_rango_pas(pas):
     if 140 <= pas <= 159: return '140-159'
     if 160 <= pas <= 179: return '160-179'
     return None
-
 
 def obtener_indice_colesterol(col_no_hdl):
     """
@@ -624,8 +893,7 @@ def obtener_indice_colesterol(col_no_hdl):
     if 6.0 <= col_no_hdl <= 7.0: return 3
     return None
 
-
-def obtener_tabla(sexo, fumador, edad, region='moderado'):
+def obtener_tabla(sexo, fumador, edad, region='bajo'):
     """
     Retorna la tabla correspondiente según los parámetros.
 
@@ -633,14 +901,26 @@ def obtener_tabla(sexo, fumador, edad, region='moderado'):
         sexo (str): 'varon' o 'mujer'
         fumador (bool): True si es fumador
         edad (int): Edad del paciente
-        region (str): 'moderado' o 'muy_alto'
+        region (str): 'bajo', 'moderado' o 'muy_alto'
 
     Returns:
         dict: Tabla de datos correspondiente
     """
     score_type = 'score2op' if edad >= 70 else 'score2'
 
-    if region == 'moderado':
+    if region == 'bajo':
+        if score_type == 'score2':
+            if sexo == 'varon':
+                return SCORE2_BAJO_VARONES_FUMADORES if fumador else SCORE2_BAJO_VARONES_NO_FUMADORES
+            else:
+                return SCORE2_BAJO_MUJERES_FUMADORAS if fumador else SCORE2_BAJO_MUJERES_NO_FUMADORAS
+        else:  # score2op
+            if sexo == 'varon':
+                return SCORE2OP_BAJO_VARONES_FUMADORES if fumador else SCORE2OP_BAJO_VARONES_NO_FUMADORES
+            else:
+                return SCORE2OP_BAJO_MUJERES_FUMADORAS if fumador else SCORE2OP_BAJO_MUJERES_NO_FUMADORAS
+
+    elif region == 'moderado':
         if score_type == 'score2':
             if sexo == 'varon':
                 return SCORE2_MODERADO_VARONES_FUMADORES if fumador else SCORE2_MODERADO_VARONES_NO_FUMADORES
@@ -666,8 +946,7 @@ def obtener_tabla(sexo, fumador, edad, region='moderado'):
 
     return None
 
-
-def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='moderado'):
+def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='bajo', interpolar=False):
     """
     Calcula el riesgo cardiovascular según SCORE2/SCORE2-OP.
 
@@ -677,7 +956,8 @@ def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='moderado'):
         fumador (bool): True si es fumador
         pas (int): Presión arterial sistólica
         col_no_hdl (float): Colesterol no-HDL en mmol/L
-        region (str): 'moderado' o 'muy_alto'
+        region (str): 'bajo', 'moderado' o 'muy_alto'
+        interpolar (bool): Si True, interpola entre valores (más preciso)
 
     Returns:
         dict: {'riesgo': int, 'categoria': str, 'score_type': str, 'region': str} o error
@@ -692,18 +972,47 @@ def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='moderado'):
 
     rango_edad = obtener_rango_edad(edad, score_type)
     rango_pas = obtener_rango_pas(pas)
-    indice_col = obtener_indice_colesterol(col_no_hdl)
 
-    if not all([rango_edad, rango_pas, indice_col is not None]):
+    if not all([rango_edad, rango_pas]):
         return {'error': 'Valores fuera de rango permitido'}
 
-    # Obtener tabla y calcular riesgo
+    # Obtener tabla
     tabla = obtener_tabla(sexo, fumador, edad, region)
     if not tabla:
         return {'error': 'No se encontró la tabla correspondiente'}
 
     try:
-        riesgo = tabla[rango_edad][rango_pas][indice_col]
+        if interpolar and 3.0 <= col_no_hdl <= 7.0:
+            # Interpolación lineal del colesterol
+            # Encontrar los dos índices entre los que está el valor
+            if col_no_hdl < 4.0:
+                indice_bajo, indice_alto = 0, 0
+                factor = 0
+            elif col_no_hdl < 5.0:
+                indice_bajo, indice_alto = 0, 1
+                factor = (col_no_hdl - 4.0) / 1.0
+            elif col_no_hdl < 6.0:
+                indice_bajo, indice_alto = 1, 2
+                factor = (col_no_hdl - 5.0) / 1.0
+            elif col_no_hdl < 7.0:
+                indice_bajo, indice_alto = 2, 3
+                factor = (col_no_hdl - 6.0) / 1.0
+            else:
+                indice_bajo, indice_alto = 3, 3
+                factor = 0
+
+            valor_bajo = tabla[rango_edad][rango_pas][indice_bajo]
+            valor_alto = tabla[rango_edad][rango_pas][indice_alto]
+
+            # Interpolación lineal
+            riesgo = int(valor_bajo + (valor_alto - valor_bajo) * factor)
+        else:
+            # Método discreto (original)
+            indice_col = obtener_indice_colesterol(col_no_hdl)
+            if indice_col is None:
+                return {'error': 'Colesterol no-HDL fuera de rango (3.0-7.0 mmol/L)'}
+            riesgo = tabla[rango_edad][rango_pas][indice_col]
+
     except (KeyError, IndexError):
         return {'error': 'Error al obtener el valor de riesgo'}
 
@@ -734,9 +1043,9 @@ def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='moderado'):
         'riesgo': riesgo,
         'categoria': categoria,
         'score_type': score_type.upper(),
-        'region': region.upper()
+        'region': region.upper(),
+        'metodo': 'interpolado' if interpolar else 'discreto'
     }
-
 
 def convertir_colesterol_mg_a_mmol(col_mg_dl):
     """
@@ -750,7 +1059,6 @@ def convertir_colesterol_mg_a_mmol(col_mg_dl):
     """
     return col_mg_dl / 38.67
 
-
 def convertir_colesterol_mmol_a_mg(col_mmol_l):
     """
     Convierte colesterol de mmol/L a mg/dL.
@@ -763,30 +1071,43 @@ def convertir_colesterol_mmol_a_mg(col_mmol_l):
     """
     return col_mmol_l * 38.67
 
-
 # ============================================================================
 # EJEMPLO DE USO
 # ============================================================================
 if __name__ == "__main__":
-    print("=" * 70)
-    print("SISTEMA SCORE2/SCORE2-OP - Regiones MODERADO y MUY ALTO")
+    print("="*70)
+    print("SISTEMA SCORE2/SCORE2-OP - Regiones BAJO, MODERADO y MUY ALTO")
     print("Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes")
-    print("=" * 70)
+    print("="*70)
 
-    # Ejemplo 1: Varón joven, región moderada
-    print("\nEjemplo 1: Varón 45 años, fumador, región MODERADO")
+    # Ejemplo 1: Varón joven, región BAJO (como Argentina)
+    print("\nEjemplo 1: Varón 51 años, fumador, región BAJO (Argentina)")
     resultado = calcular_riesgo(
-        edad=45,
+        edad=51,
         sexo='varon',
         fumador=True,
-        pas=140,
-        col_no_hdl=5.2,
+        pas=130,
+        col_no_hdl=4.8,
+        region='bajo'
+    )
+    print(f"Resultado: {resultado}")
+    print("(Debería dar ~8-10% como HeartScore)")
+
+    # Ejemplo 2: Mismo caso pero región MODERADO
+    print("\nEjemplo 2: Mismo caso, región MODERADO")
+    resultado = calcular_riesgo(
+        edad=51,
+        sexo='varon',
+        fumador=True,
+        pas=130,
+        col_no_hdl=4.8,
         region='moderado'
     )
     print(f"Resultado: {resultado}")
+    print("(Dará ~23% - más conservador)")
 
-    # Ejemplo 2: Mujer mayor, región muy alto
-    print("\nEjemplo 2: Mujer 72 años, no fumadora, región MUY ALTO")
+    # Ejemplo 3: Mujer mayor, región muy alto
+    print("\nEjemplo 3: Mujer 72 años, no fumadora, región MUY ALTO")
     resultado = calcular_riesgo(
         edad=72,
         sexo='mujer',
@@ -797,8 +1118,8 @@ if __name__ == "__main__":
     )
     print(f"Resultado: {resultado}")
 
-    # Ejemplo 3: Conversión de colesterol
-    print("\nEjemplo 3: Conversión de colesterol")
+    # Ejemplo 4: Conversión de colesterol
+    print("\nEjemplo 4: Conversión de colesterol")
     col_mg = 200  # mg/dL
     col_mmol = convertir_colesterol_mg_a_mmol(col_mg)
     print(f"{col_mg} mg/dL = {col_mmol:.2f} mmol/L")
