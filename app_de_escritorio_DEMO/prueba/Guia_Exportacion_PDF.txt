@@ -1,0 +1,357 @@
+# 📄 GUÍA DE EXPORTACIÓN A PDF
+
+## Sistema SCORE2 - Reportes de Pacientes
+
+---
+
+## 🎯 ¿QUÉ ES ESTA FUNCIÓN?
+
+Permite al doctor **exportar un reporte completo en PDF** de cualquier paciente, incluyendo:
+
+✅ Datos personales del paciente  
+✅ Historial completo de evaluaciones de riesgo  
+✅ Interpretación médica del último cálculo  
+✅ Recomendaciones específicas según categoría de riesgo  
+✅ Formato profesional listo para imprimir o enviar  
+
+---
+
+## 🚀 CÓMO USAR
+
+### Paso 1: Instalar reportlab (si aún no lo hiciste)
+
+```bash
+pip install reportlab
+```
+
+### Paso 2: En la aplicación
+
+1. **Abre la pestaña "👥 Pacientes"**
+2. **Selecciona el paciente** que quieres exportar (un click en la fila)
+3. **Presiona el botón "📄 Exportar PDF"**
+4. **Elige dónde guardar el archivo**
+   - Nombre sugerido: `Reporte_Apellido_Nombre_YYYYMMDD.pdf`
+5. **¡Listo!** El PDF se genera automáticamente
+
+---
+
+## 📋 CONTENIDO DEL REPORTE PDF
+
+### 1. **ENCABEZADO**
+```
+REPORTE DE RIESGO CARDIOVASCULAR
+Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes
+Fecha del reporte: 22/01/2026 14:30
+```
+
+### 2. **DATOS DEL PACIENTE**
+- Nombre completo
+- DNI
+- Fecha de nacimiento
+- Sexo
+- Teléfono
+- Email
+- Obra Social
+- N° de Afiliado
+
+### 3. **HISTORIAL DE EVALUACIONES**
+
+Tabla completa con todas las evaluaciones realizadas:
+
+| Fecha | Edad | Fumador | PAS | Col no-HDL | Riesgo % | Categoría | Método | Región |
+|-------|------|---------|-----|------------|----------|-----------|--------|--------|
+| 22/01/2026 14:25 | 51 | Sí | 130 | 4.8 | 8% | Moderado | SCORE2 | MODERADO |
+| 15/12/2025 10:15 | 51 | Sí | 135 | 5.2 | 11% | Moderado | SCORE2 | MODERADO |
+
+**Características:**
+- ✅ Colores según categoría (Verde=Bajo, Naranja=Moderado, Rojo=Alto)
+- ✅ Filas alternadas para mejor lectura
+- ✅ Ordenado por fecha (más reciente primero)
+
+### 4. **ÚLTIMA EVALUACIÓN - INTERPRETACIÓN**
+
+**Texto automático según categoría:**
+
+#### Si es RIESGO BAJO:
+> "El paciente presenta un riesgo BAJO (3%) de sufrir un evento cardiovascular 
+> mortal o no mortal en los próximos 10 años. Este nivel de riesgo es favorable 
+> y sugiere que el paciente mantiene buenos hábitos de vida..."
+
+#### Si es RIESGO MODERADO:
+> "El paciente presenta un riesgo MODERADO (8%) de sufrir un evento cardiovascular 
+> en los próximos 10 años. Este nivel de riesgo indica la necesidad de intervención 
+> preventiva. Se recomienda modificación intensiva del estilo de vida..."
+
+#### Si es RIESGO ALTO:
+> "El paciente presenta un riesgo ALTO (23%) de sufrir un evento cardiovascular 
+> en los próximos 10 años. Este nivel de riesgo requiere intervención inmediata 
+> y agresiva. Se recomienda tratamiento farmacológico intensivo..."
+
+### 5. **RECOMENDACIONES ESPECÍFICAS**
+
+**Se adaptan automáticamente según:**
+- Categoría de riesgo
+- Si es fumador
+- Necesidad de medicación
+
+**Ejemplo para RIESGO MODERADO + FUMADOR:**
+- • **CESACIÓN TABÁQUICA URGENTE:** Se recomienda derivación a programa...
+- • Control de presión arterial objetivo <130/80 mmHg
+- • Objetivo LDL-C <100 mg/dL (considerar estatinas)
+- • Dieta estricta tipo mediterránea
+- • Actividad física supervisada 5 días/semana
+- • Seguimiento trimestral
+
+### 6. **PIE DE PÁGINA**
+```
+Este reporte fue generado automáticamente por el Sistema SCORE2...
+Basado en las Guías ESC 2021 para la prevención de enfermedades cardiovasculares.
+Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes Capital
+```
+
+---
+
+## 🎨 DISEÑO DEL PDF
+
+### Características visuales:
+
+✅ **Encabezados en azul** (#2563eb) - color institucional  
+✅ **Tablas profesionales** con bordes y colores alternados  
+✅ **Categorías de riesgo coloreadas:**
+   - 🟢 Verde (#10b981) para Riesgo Bajo
+   - 🟡 Naranja (#f59e0b) para Riesgo Moderado
+   - 🔴 Rojo (#ef4444) para Riesgo Alto
+
+✅ **Tipografía legible** (Helvetica)  
+✅ **Espaciado profesional**  
+✅ **Formato A4** estándar  
+✅ **Listo para imprimir** o enviar por email  
+
+---
+
+## 💡 CASOS DE USO
+
+### Caso 1: Paciente con seguimiento
+
+**Doctor Pérez tiene un paciente con 5 evaluaciones de riesgo:**
+
+1. Selecciona al paciente en la lista
+2. Exporta a PDF
+3. **Resultado:** PDF con tabla mostrando evolución del riesgo a lo largo del tiempo
+4. Puede ver si el tratamiento está funcionando
+5. Puede enviar el reporte al paciente por email
+
+### Caso 2: Derivación a especialista
+
+**Doctor García necesita derivar a un paciente a cardiología:**
+
+1. Exporta el PDF del paciente
+2. El PDF incluye todo el historial de evaluaciones
+3. Adjunta el PDF en la derivación
+4. El cardiólogo tiene toda la información de un vistazo
+
+### Caso 3: Auditoría de obra social
+
+**Obra social pide documentación de evaluaciones:**
+
+1. Doctor selecciona los pacientes relevantes
+2. Exporta cada uno a PDF
+3. Envía los PDFs como respaldo
+4. Documentación profesional y completa
+
+---
+
+## ⚠️ SOLUCIÓN DE PROBLEMAS
+
+### Error: "La librería 'reportlab' no está instalada"
+
+**Solución:**
+```bash
+pip install reportlab
+```
+
+Si sigue sin funcionar:
+```bash
+pip install --upgrade pip
+pip install reportlab --no-cache-dir
+```
+
+### Error al generar el PDF
+
+**Verificar:**
+1. ✅ Que el paciente tenga datos completos
+2. ✅ Que haya permisos de escritura en la carpeta destino
+3. ✅ Que no haya otro PDF abierto con el mismo nombre
+
+### El PDF se genera pero está en blanco
+
+**Posibles causas:**
+- Paciente sin evaluaciones de riesgo
+- Error en la base de datos
+
+**Solución:** Ver consola (ventana negra) para más detalles del error
+
+---
+
+## 🔧 PERSONALIZACIÓN
+
+### ¿Quieres cambiar el encabezado?
+
+En `main.py`, busca la función `exportar_paciente_pdf()`:
+
+```python
+# Cambiar el título
+story.append(Paragraph("TU TÍTULO AQUÍ", titulo_style))
+
+# Cambiar el subtítulo
+story.append(Paragraph("Tu institución aquí", styles['Normal']))
+```
+
+### ¿Quieres agregar el logo de la institución?
+
+```python
+from reportlab.platypus import Image
+
+# Agregar después del encabezado
+logo = Image('ruta/a/tu/logo.png', width=2*inch, height=1*inch)
+story.append(logo)
+```
+
+---
+
+## 📊 EJEMPLO DE USO COMPLETO
+
+### Escenario: Paciente García, Arturo
+
+**Datos:**
+- DNI: 23456731
+- Edad: 51 años
+- 3 evaluaciones realizadas
+
+**Pasos:**
+
+1. **Abrir app** → Pestaña "Pacientes"
+
+2. **Buscar** "Garcia" en la barra de búsqueda
+
+3. **Click** en la fila del paciente
+
+4. **Click** en botón "📄 Exportar PDF"
+
+5. **Guardar** como: `Reporte_Garcia_Arturo_20260122.pdf`
+
+6. **Resultado:** PDF generado con:
+   - Datos personales completos
+   - Tabla con 3 evaluaciones
+   - Última evaluación: 8% (Riesgo Moderado)
+   - Interpretación detallada
+   - Recomendaciones específicas (incluye cesación tabáquica porque es fumador)
+
+---
+
+## 📝 CHECKLIST ANTES DE EXPORTAR
+
+Antes de exportar el PDF para un paciente, verifica:
+
+- [ ] Datos del paciente completos (nombre, DNI, etc.)
+- [ ] Al menos una evaluación de riesgo realizada
+- [ ] Última evaluación tiene datos correctos
+- [ ] Reportlab instalado (`pip install reportlab`)
+- [ ] Tienes permisos de escritura en la carpeta destino
+
+---
+
+## 🎯 VENTAJAS DE ESTA FUNCIÓN
+
+### Para el Doctor:
+✅ **Ahorra tiempo** - No más copiar datos manualmente  
+✅ **Profesional** - Reportes con aspecto institucional  
+✅ **Completo** - Todo el historial en un solo documento  
+✅ **Portable** - PDF se puede enviar por email o imprimir  
+
+### Para el Paciente:
+✅ **Comprensible** - Interpretación en lenguaje claro  
+✅ **Motivador** - Ve su evolución a lo largo del tiempo  
+✅ **Útil** - Puede compartir con otros médicos  
+
+### Para la Institución:
+✅ **Documentado** - Respaldo de todas las evaluaciones  
+✅ **Estandarizado** - Todos los reportes tienen el mismo formato  
+✅ **Auditable** - Evidencia clara del trabajo realizado  
+
+---
+
+## 🔮 FUTURAS MEJORAS
+
+Posibles mejoras que se pueden agregar:
+
+- [ ] Gráfico de evolución del riesgo a lo largo del tiempo
+- [ ] Comparación con población de referencia
+- [ ] QR code para verificar autenticidad
+- [ ] Firma digital del médico
+- [ ] Logo institucional en el encabezado
+- [ ] Watermark de "Confidencial"
+- [ ] Exportación múltiple (varios pacientes a la vez)
+
+---
+
+## 💬 PREGUNTAS FRECUENTES
+
+### ¿Puedo exportar varios pacientes a la vez?
+
+Actualmente no, pero es una mejora futura planeada. Por ahora:
+- Selecciona un paciente
+- Exporta su PDF
+- Repite para cada paciente que necesites
+
+### ¿El PDF incluye datos sensibles?
+
+Sí, incluye:
+- Datos personales completos
+- Historial médico de evaluaciones
+- DNI y datos de contacto
+
+**Recomendación:** Manejar con confidencialidad según normativa de protección de datos.
+
+### ¿Puedo modificar el PDF después de generarlo?
+
+El PDF generado es estándar. Puedes:
+- Abrirlo con Adobe Acrobat u otro editor de PDF
+- Agregar anotaciones
+- Firmar digitalmente
+- No se recomienda modificar el contenido generado automáticamente
+
+### ¿Qué pasa si el paciente no tiene evaluaciones?
+
+El PDF se genera igual con:
+- Datos personales completos
+- Mensaje: "No se han registrado evaluaciones de riesgo para este paciente"
+- Sin sección de interpretación ni recomendaciones
+
+---
+
+## 📚 RECURSOS ADICIONALES
+
+### Documentación reportlab:
+- https://www.reportlab.com/docs/reportlab-userguide.pdf
+
+### Guías ESC 2021:
+- https://academic.oup.com/eurheartj/article/42/25/2439/6297709
+
+---
+
+## ✅ RESUMEN RÁPIDO
+
+1. **Instalar:** `pip install reportlab`
+2. **Seleccionar** paciente en la pestaña "Pacientes"
+3. **Click** en "📄 Exportar PDF"
+4. **Guardar** donde quieras
+5. **¡Listo!** PDF profesional generado
+
+---
+
+**Desarrollado para:**
+Unidad de Prevención Cardiometabólica
+ISSUNNE - Corrientes Capital
+
+**Actualizado:** 22 de Enero 2026
