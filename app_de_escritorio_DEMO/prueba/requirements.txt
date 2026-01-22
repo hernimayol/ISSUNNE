@@ -1,23 +1,107 @@
 # Requirements para la aplicación SCORE2
 # Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes
 
-# Base de datos
-# SQLite viene incluido con Python, no requiere instalación adicional
+# ==============================================================================
+# DEPENDENCIAS OBLIGATORIAS (mínimas para que funcione)
+# ==============================================================================
+# NOTA: SQLite viene incluido con Python, no requiere instalación adicional
+# NOTA: tkinter viene incluido con Python, no requiere instalación adicional
 
-# Interfaz gráfica
-tkcalendar==1.6.1       # Selector de fechas
-pillow==10.1.0           # Manejo de imágenes (para iconos)
+# ==============================================================================
+# DEPENDENCIAS OPCIONALES RECOMENDADAS
+# ==============================================================================
 
-# Gráficos y visualización
-matplotlib==3.8.2        # Gráficos estadísticos
-numpy==1.26.2            # Operaciones numéricas
+# Para gráficos y visualización (opcional, pero recomendado)
+matplotlib>=3.5.0
+numpy>=1.21.0
 
-# Reportes y exportación
-openpyxl==3.1.2         # Exportación a Excel
-reportlab==4.0.7        # Generación de PDFs
+# Para generación de reportes PDF (REQUERIDO para exportar PDFs)
+reportlab>=3.6.0
 
-# Opcional: Para mejorar la apariencia
-# customtkinter==5.2.1  # Interfaz moderna (descomentar si lo deseas)
+# Para exportación mejorada a Excel (opcional)
+openpyxl>=3.0.0
 
-# Desarrollo
-# pytest==7.4.3         # Para testing (descomentar si lo necesitas)
+# Para manejo mejorado de imágenes (opcional)
+pillow>=9.0.0
+
+# ==============================================================================
+# INSTALACIÓN MÍNIMA (solo lo esencial):
+# ==============================================================================
+# pip install matplotlib numpy reportlab
+
+# ==============================================================================
+# INSTALACIÓN COMPLETA (todo recomendado):
+# ==============================================================================
+# pip install matplotlib numpy reportlab openpyxl pillow
+
+# ==============================================================================
+# SI HAY PROBLEMAS CON MATPLOTLIB:
+# ==============================================================================
+# La aplicación funcionará sin matplotlib, solo se deshabilitarán los gráficos
+# En Windows, si hay error con matplotlib, probar:
+# pip install --upgrade pip
+# pip install matplotlib --no-cache-dir
+
+# ==============================================================================
+# PARA EXPORTAR PDFs:
+# ==============================================================================
+# La función de exportación a PDF requiere reportlab
+# pip install reportlab
+
+# ==============================================================================
+# VERIFICAR INSTALACIÓN:
+# ==============================================================================
+# Ejecutar en consola Python:
+# import tkinter
+# import sqlite3
+# import matplotlib  (solo si lo instalaste)
+# import reportlab   (para exportar PDFs)
+# Si no dan error, está todo OK# Requirements para la aplicación SCORE2
+# Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes
+
+# ==============================================================================
+# DEPENDENCIAS OBLIGATORIAS (mínimas para que funcione)
+# ==============================================================================
+# NOTA: SQLite viene incluido con Python, no requiere instalación adicional
+# NOTA: tkinter viene incluido con Python, no requiere instalación adicional
+
+# ==============================================================================
+# DEPENDENCIAS OPCIONALES RECOMENDADAS
+# ==============================================================================
+
+# Para gráficos y visualización (opcional, pero recomendado)
+matplotlib>=3.5.0
+numpy>=1.21.0
+
+# Para exportación mejorada a Excel (opcional)
+openpyxl>=3.0.0
+
+# Para manejo mejorado de imágenes (opcional)
+pillow>=9.0.0
+
+# ==============================================================================
+# INSTALACIÓN MÍNIMA (solo lo esencial):
+# ==============================================================================
+# pip install matplotlib numpy
+
+# ==============================================================================
+# INSTALACIÓN COMPLETA (todo recomendado):
+# ==============================================================================
+# pip install matplotlib numpy openpyxl pillow
+
+# ==============================================================================
+# SI HAY PROBLEMAS CON MATPLOTLIB:
+# ==============================================================================
+# La aplicación funcionará sin matplotlib, solo se deshabilitarán los gráficos
+# En Windows, si hay error con matplotlib, probar:
+# pip install --upgrade pip
+# pip install matplotlib --no-cache-dir
+
+# ==============================================================================
+# VERIFICAR INSTALACIÓN:
+# ==============================================================================
+# Ejecutar en consola Python:
+# import tkinter
+# import sqlite3
+# import matplotlib  (solo si lo instalaste)
+# Si no dan error, está todo OK

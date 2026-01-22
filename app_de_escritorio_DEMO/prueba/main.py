@@ -189,7 +189,7 @@ class SCORE2App:
         row = 2
 
         # Fecha de nacimiento (como HeartScore)
-        ttk.Label(left_frame, text="Birth date *", foreground='red').grid(
+        ttk.Label(left_frame, text="Fecha de Nacimiento *", foreground='red').grid(
             row=row, column=0, sticky='w', pady=5)
 
         fecha_frame = ttk.Frame(left_frame)
@@ -201,19 +201,19 @@ class SCORE2App:
         ttk.Entry(fecha_frame, textvariable=self.var_mes, width=8).pack(side='left')
         ttk.Label(fecha_frame, text="/").pack(side='left', padx=2)
         ttk.Entry(fecha_frame, textvariable=self.var_anio, width=10).pack(side='left')
-        ttk.Label(fecha_frame, text="(month / year)", foreground='gray',
+        ttk.Label(fecha_frame, text="(Mes / Año)", foreground='gray',
                  font=('Segoe UI', 8)).pack(side='left', padx=(5, 0))
         row += 1
 
         # Sexo
-        ttk.Label(left_frame, text="Sex *", foreground='red').grid(
+        ttk.Label(left_frame, text="Sexo *", foreground='red').grid(
             row=row, column=0, sticky='w', pady=5)
         self.var_sexo = tk.StringVar(value='varon')
         sexo_frame = ttk.Frame(left_frame)
         sexo_frame.grid(row=row, column=1, sticky='w', pady=5)
-        ttk.Radiobutton(sexo_frame, text="male", variable=self.var_sexo,
+        ttk.Radiobutton(sexo_frame, text="Hombre", variable=self.var_sexo,
                        value='varon').pack(side='left')
-        ttk.Radiobutton(sexo_frame, text="female", variable=self.var_sexo,
+        ttk.Radiobutton(sexo_frame, text="Mujer", variable=self.var_sexo,
                        value='mujer').pack(side='left', padx=(10, 0))
         row += 1
 
@@ -222,8 +222,8 @@ class SCORE2App:
             row=row, column=0, columnspan=2, sticky='ew', pady=10)
         row += 1
 
-        # Systolic blood pressure
-        ttk.Label(left_frame, text="Systolic blood pressure *",
+        # Presión Arterial Sistólica (PAS)
+        ttk.Label(left_frame, text="Presión Arterial Sistólica *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         pas_frame = ttk.Frame(left_frame)
         pas_frame.grid(row=row, column=1, sticky='w', pady=5)
@@ -233,7 +233,7 @@ class SCORE2App:
         row += 1
 
         # Total Cholesterol con selector de unidades
-        ttk.Label(left_frame, text="Total Cholesterol *",
+        ttk.Label(left_frame, text="Colesterol Total *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         col_total_frame = ttk.Frame(left_frame)
         col_total_frame.grid(row=row, column=1, sticky='w', pady=5)
@@ -251,7 +251,7 @@ class SCORE2App:
         row += 1
 
         # HDL-Cholesterol
-        ttk.Label(left_frame, text="HDL-Cholesterol *",
+        ttk.Label(left_frame, text="Colesterol-HDL *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         hdl_frame = ttk.Frame(left_frame)
         hdl_frame.grid(row=row, column=1, sticky='w', pady=5)
@@ -261,7 +261,7 @@ class SCORE2App:
         row += 1
 
         # LDL-Cholesterol (opcional)
-        ttk.Label(left_frame, text="LDL-Cholesterol",
+        ttk.Label(left_frame, text="Colesterol-LDL",
                  foreground='gray').grid(row=row, column=0, sticky='w', pady=5)
         ldl_frame = ttk.Frame(left_frame)
         ldl_frame.grid(row=row, column=1, sticky='w', pady=5)
@@ -271,12 +271,12 @@ class SCORE2App:
         row += 1
 
         # Current Smoker
-        ttk.Label(left_frame, text="Current Smoker *",
+        ttk.Label(left_frame, text="¿Fumador activo? *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         self.var_fumador = tk.BooleanVar()
         fumador_frame = ttk.Frame(left_frame)
         fumador_frame.grid(row=row, column=1, sticky='w', pady=5)
-        ttk.Radiobutton(fumador_frame, text="Yes", variable=self.var_fumador,
+        ttk.Radiobutton(fumador_frame, text="Si", variable=self.var_fumador,
                        value=True).pack(side='left')
         ttk.Radiobutton(fumador_frame, text="No", variable=self.var_fumador,
                        value=False).pack(side='left', padx=(10, 0))
@@ -289,9 +289,9 @@ class SCORE2App:
 
         ttk.Label(left_frame, text="Región de Riesgo:", font=('Segoe UI', 10, 'bold')).grid(
             row=row, column=0, sticky='w', pady=5)
-        self.var_region = tk.StringVar(value='bajo')  # BAJO por defecto (Argentina)
+        self.var_region = tk.StringVar(value='moderado')  # MODERADO por defecto
         region_combo = ttk.Combobox(left_frame, textvariable=self.var_region,
-                                   values=['bajo', 'moderado', 'muy_alto'],
+                                   values=['moderado', 'muy_alto'],
                                    state='readonly', width=20)
         region_combo.grid(row=row, column=1, sticky='w', pady=5)
         row += 1
@@ -301,7 +301,7 @@ class SCORE2App:
         nota_region.grid(row=row, column=0, columnspan=2, sticky='ew', pady=5, padx=5)
 
         tk.Label(nota_region,
-                text="💡 Argentina = Región BAJO RIESGO (según ESC 2021)",
+                text="💡 Usar MODERADO para Argentina (según tablas ESC 2021)",
                 bg='#fff3cd', font=('Segoe UI', 8, 'bold'),
                 foreground='#856404').pack(anchor='w', padx=10, pady=5)
         row += 1
@@ -344,14 +344,14 @@ class SCORE2App:
         row += 1
 
         # Botón calcular
-        ttk.Button(left_frame, text="📊 CALCULATE RISK",
+        ttk.Button(left_frame, text="📊 CALCULAR RIESGO",
                   command=self.calcular_riesgo_click,
                   style='Primary.TButton').grid(
             row=row, column=0, columnspan=2, sticky='ew', pady=20)
         row += 1
 
         # Botón guardar
-        ttk.Button(left_frame, text="💾 SAVE CALCULATION",
+        ttk.Button(left_frame, text="💾 GUARDAR CÁLCULO",
                   command=self.guardar_calculo,
                   style='Success.TButton').grid(
             row=row, column=0, columnspan=2, sticky='ew')
@@ -443,38 +443,124 @@ class SCORE2App:
                   command=self.ver_paciente).pack(side='left', padx=5)
         ttk.Button(btn_frame, text="Editar",
                   command=self.editar_paciente).pack(side='left', padx=5)
+        ttk.Button(btn_frame, text="📄 Exportar PDF",
+                  command=self.exportar_paciente_pdf).pack(side='left', padx=5)
         ttk.Button(btn_frame, text="Eliminar",
                   command=self.eliminar_paciente).pack(side='left', padx=5)
 
     def crear_tab_historial(self):
         """Crea la pestaña de historial de cálculos"""
-        ttk.Label(self.tab_historial,
+        # Frame principal
+        frame_principal = ttk.Frame(self.tab_historial)
+        frame_principal.pack(fill='both', expand=True, padx=20, pady=20)
+
+        ttk.Label(frame_principal,
                  text="Historial de Cálculos",
-                 style='Header.TLabel').pack(pady=20)
+                 style='Header.TLabel').pack(pady=(0, 20))
+
+        # Botones de acción
+        btn_frame = ttk.Frame(frame_principal)
+        btn_frame.pack(fill='x', pady=(0, 10))
+
+        ttk.Button(btn_frame, text="🔄 Actualizar",
+                  command=self.cargar_historial).pack(side='left', padx=5)
+        ttk.Button(btn_frame, text="📊 Exportar CSV",
+                  command=self.exportar_csv).pack(side='left', padx=5)
 
         # Tabla de historial
-        hist_frame = ttk.Frame(self.tab_historial)
-        hist_frame.pack(fill='both', expand=True, padx=20, pady=10)
+        hist_frame = ttk.Frame(frame_principal)
+        hist_frame.pack(fill='both', expand=True)
 
+        # Scrollbars
         scroll_y = ttk.Scrollbar(hist_frame, orient='vertical')
         scroll_y.pack(side='right', fill='y')
 
+        scroll_x = ttk.Scrollbar(hist_frame, orient='horizontal')
+        scroll_x.pack(side='bottom', fill='x')
+
         self.tree_historial = ttk.Treeview(hist_frame,
-                                          columns=('fecha', 'paciente', 'edad', 'riesgo',
-                                                  'categoria', 'score'),
+                                          columns=('id', 'fecha', 'paciente', 'edad',
+                                                  'fumador', 'pas', 'col_no_hdl',
+                                                  'riesgo', 'categoria', 'score', 'region'),
                                           show='headings',
-                                          yscrollcommand=scroll_y.set)
+                                          yscrollcommand=scroll_y.set,
+                                          xscrollcommand=scroll_x.set)
 
         scroll_y.config(command=self.tree_historial.yview)
+        scroll_x.config(command=self.tree_historial.xview)
 
+        # Configurar columnas
+        self.tree_historial.heading('id', text='ID')
         self.tree_historial.heading('fecha', text='Fecha')
         self.tree_historial.heading('paciente', text='Paciente')
         self.tree_historial.heading('edad', text='Edad')
+        self.tree_historial.heading('fumador', text='Fumador')
+        self.tree_historial.heading('pas', text='PAS')
+        self.tree_historial.heading('col_no_hdl', text='no-HDL')
         self.tree_historial.heading('riesgo', text='Riesgo %')
         self.tree_historial.heading('categoria', text='Categoría')
         self.tree_historial.heading('score', text='Tipo')
+        self.tree_historial.heading('region', text='Región')
+
+        # Anchos de columnas
+        self.tree_historial.column('id', width=50)
+        self.tree_historial.column('fecha', width=150)
+        self.tree_historial.column('paciente', width=200)
+        self.tree_historial.column('edad', width=60)
+        self.tree_historial.column('fumador', width=70)
+        self.tree_historial.column('pas', width=60)
+        self.tree_historial.column('col_no_hdl', width=80)
+        self.tree_historial.column('riesgo', width=80)
+        self.tree_historial.column('categoria', width=100)
+        self.tree_historial.column('score', width=80)
+        self.tree_historial.column('region', width=100)
 
         self.tree_historial.pack(fill='both', expand=True)
+
+        # Cargar datos iniciales
+        self.cargar_historial()
+
+    def cargar_historial(self):
+        """Carga todos los cálculos en el historial"""
+        # Limpiar tabla
+        for item in self.tree_historial.get_children():
+            self.tree_historial.delete(item)
+
+        try:
+            # Obtener todos los cálculos con datos de pacientes
+            self.db.cursor.execute('''
+                SELECT c.id, c.fecha_calculo, p.nombre, p.apellido, c.edad,
+                       c.fumador, c.pas, c.colesterol_no_hdl, c.riesgo_porcentaje,
+                       c.categoria, c.score_type, c.region
+                FROM calculos_riesgo c
+                JOIN pacientes p ON c.paciente_id = p.id
+                WHERE p.activo = 1
+                ORDER BY c.fecha_calculo DESC
+            ''')
+
+            calculos = self.db.cursor.fetchall()
+
+            for calc in calculos:
+                fumador_texto = 'Sí' if calc[5] else 'No'
+                nombre_completo = f"{calc[3]}, {calc[2]}"  # Apellido, Nombre
+
+                self.tree_historial.insert('', 'end', values=(
+                    calc[0],  # id
+                    calc[1],  # fecha
+                    nombre_completo,  # paciente
+                    calc[4],  # edad
+                    fumador_texto,  # fumador
+                    calc[6],  # pas
+                    f"{calc[7]:.2f}" if calc[7] else '',  # col_no_hdl
+                    f"{calc[8]}%",  # riesgo
+                    calc[9],  # categoria
+                    calc[10],  # score_type
+                    calc[11]  # region
+                ))
+        except Exception as e:
+            print(f"Error al cargar historial: {e}")
+            import traceback
+            traceback.print_exc()
 
     def crear_tab_estadisticas(self):
         """Crea la pestaña de estadísticas"""
@@ -552,6 +638,8 @@ class SCORE2App:
             hdl = float(self.var_hdl.get())
             sexo = self.var_sexo.get()
             fumador = self.var_fumador.get()
+
+            # IMPORTANTE: Leer región AQUÍ, no antes
             region = self.var_region.get()
 
             # Convertir colesterol total a mmol/L si está en mg/dl
@@ -584,7 +672,10 @@ class SCORE2App:
             print(f"Colesterol Total: {col_total:.2f} mmol/L")
             print(f"HDL-Cholesterol: {hdl:.2f} mmol/L")
             print(f"Colesterol no-HDL (calculado): {col_no_hdl:.2f} mmol/L")
-            print(f"Región: {region}")
+
+            # IMPORTANTE: Obtener región del combo DESPUÉS de la conversión
+            region = self.var_region.get()
+            print(f"Región seleccionada: {region}")
             print(f"{'='*60}")
 
             # Calcular riesgo
@@ -733,6 +824,7 @@ class SCORE2App:
             if calculo_id:
                 messagebox.showinfo("Éxito", "Cálculo guardado correctamente")
                 self.actualizar_lista_pacientes()
+                self.cargar_historial()  # Actualizar historial automáticamente
             else:
                 messagebox.showerror("Error", "No se pudo guardar el cálculo")
 
@@ -803,6 +895,300 @@ class SCORE2App:
         """Muestra el diálogo para crear un nuevo paciente"""
         NuevoPacienteDialog(self.root, self.db, self.actualizar_lista_pacientes)
 
+    def exportar_paciente_pdf(self):
+        """Exporta los datos completos de un paciente a PDF"""
+        seleccion = self.tree_pacientes.selection()
+        if not seleccion:
+            messagebox.showwarning("Advertencia", "Por favor seleccione un paciente de la lista")
+            return
+
+        item = self.tree_pacientes.item(seleccion[0])
+        paciente_id = item['values'][0]
+
+        # Obtener datos del paciente
+        paciente = self.db.obtener_paciente(paciente_id)
+        if not paciente:
+            messagebox.showerror("Error", "No se pudieron obtener los datos del paciente")
+            return
+
+        # Obtener cálculos del paciente
+        calculos = self.db.obtener_calculos_paciente(paciente_id)
+
+        # Seleccionar ubicación del archivo
+        from datetime import datetime
+        nombre_default = f"Reporte_{paciente[2]}_{paciente[1]}_{datetime.now().strftime('%Y%m%d')}.pdf"
+
+        filename = filedialog.asksaveasfilename(
+            defaultextension='.pdf',
+            initialfile=nombre_default,
+            filetypes=[('PDF', '*.pdf'), ('Todos', '*.*')]
+        )
+
+        if not filename:
+            return
+
+        try:
+            # Intentar importar reportlab
+            try:
+                from reportlab.lib.pagesizes import letter, A4
+                from reportlab.lib import colors
+                from reportlab.lib.units import inch
+                from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
+                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+                from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+            except ImportError:
+                messagebox.showerror(
+                    "Error",
+                    "La librería 'reportlab' no está instalada.\n\n"
+                    "Para instalarla, ejecuta:\n"
+                    "pip install reportlab"
+                )
+                return
+
+            # Crear el PDF
+            doc = SimpleDocTemplate(filename, pagesize=A4)
+            story = []
+            styles = getSampleStyleSheet()
+
+            # Estilos personalizados
+            titulo_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=18,
+                textColor=colors.HexColor('#2563eb'),
+                spaceAfter=30,
+                alignment=TA_CENTER
+            )
+
+            subtitulo_style = ParagraphStyle(
+                'CustomSubtitle',
+                parent=styles['Heading2'],
+                fontSize=14,
+                textColor=colors.HexColor('#1e40af'),
+                spaceAfter=12,
+                spaceBefore=12
+            )
+
+            # Encabezado
+            story.append(Paragraph("REPORTE DE RIESGO CARDIOVASCULAR", titulo_style))
+            story.append(Paragraph("Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes", styles['Normal']))
+            story.append(Spacer(1, 0.3*inch))
+
+            # Fecha del reporte
+            fecha_reporte = datetime.now().strftime('%d/%m/%Y %H:%M')
+            story.append(Paragraph(f"<b>Fecha del reporte:</b> {fecha_reporte}", styles['Normal']))
+            story.append(Spacer(1, 0.3*inch))
+
+            # Datos del paciente
+            story.append(Paragraph("DATOS DEL PACIENTE", subtitulo_style))
+
+            datos_paciente = [
+                ['Nombre completo:', f"{paciente[1]} {paciente[2]}"],
+                ['DNI:', paciente[3] or 'No especificado'],
+                ['Fecha de nacimiento:', paciente[4] or 'No especificada'],
+                ['Sexo:', 'Masculino' if paciente[5] == 'varon' else 'Femenino'],
+                ['Teléfono:', paciente[6] or 'No especificado'],
+                ['Email:', paciente[7] or 'No especificado'],
+                ['Obra Social:', paciente[9] or 'No especificada'],
+                ['N° Afiliado:', paciente[10] or 'No especificado']
+            ]
+
+            tabla_paciente = Table(datos_paciente, colWidths=[2*inch, 4*inch])
+            tabla_paciente.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#e3f2fd')),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+                ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('LEFTPADDING', (0, 0), (-1, -1), 6),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+                ('TOPPADDING', (0, 0), (-1, -1), 6),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ]))
+
+            story.append(tabla_paciente)
+            story.append(Spacer(1, 0.4*inch))
+
+            # Historial de cálculos
+            story.append(Paragraph("HISTORIAL DE EVALUACIONES DE RIESGO", subtitulo_style))
+
+            if calculos:
+                # Encabezados de la tabla
+                datos_calculos = [['Fecha', 'Edad', 'Fumador', 'PAS\n(mmHg)', 'Col no-HDL\n(mmol/L)',
+                                  'Riesgo\n(%)', 'Categoría', 'Método', 'Región']]
+
+                for calc in calculos:
+                    # calc: (id, paciente_id, fecha, edad, fumador, pas, col_no_hdl, region,
+                    #        riesgo_%, categoria, score_type, peso, altura, imc, ...)
+                    fecha = calc[2][:16] if calc[2] else ''  # Solo fecha y hora sin segundos
+                    fumador = 'Sí' if calc[4] else 'No'
+                    col_no_hdl = f"{calc[6]:.1f}" if calc[6] else ''
+
+                    datos_calculos.append([
+                        fecha,
+                        str(calc[3]),
+                        fumador,
+                        str(calc[5]),
+                        col_no_hdl,
+                        f"{calc[8]}%",
+                        calc[9],
+                        calc[10],
+                        calc[7].upper()
+                    ])
+
+                tabla_calculos = Table(datos_calculos, colWidths=[
+                    1.1*inch, 0.5*inch, 0.6*inch, 0.6*inch, 0.7*inch, 0.6*inch, 0.8*inch, 0.7*inch, 0.7*inch
+                ])
+
+                # Estilo de la tabla
+                tabla_style = [
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 9),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ]
+
+                # Colores alternados en filas
+                for i in range(1, len(datos_calculos)):
+                    if i % 2 == 0:
+                        tabla_style.append(('BACKGROUND', (0, i), (-1, i), colors.HexColor('#f8fafc')))
+
+                    # Color según categoría de riesgo
+                    categoria = datos_calculos[i][6]
+                    if categoria == 'Bajo':
+                        tabla_style.append(('TEXTCOLOR', (6, i), (6, i), colors.HexColor('#10b981')))
+                    elif categoria == 'Moderado':
+                        tabla_style.append(('TEXTCOLOR', (6, i), (6, i), colors.HexColor('#f59e0b')))
+                    else:  # Alto
+                        tabla_style.append(('TEXTCOLOR', (6, i), (6, i), colors.HexColor('#ef4444')))
+
+                    tabla_style.append(('FONTNAME', (6, i), (6, i), 'Helvetica-Bold'))
+
+                tabla_calculos.setStyle(TableStyle(tabla_style))
+                story.append(tabla_calculos)
+
+                # Último cálculo - Interpretación
+                if calculos:
+                    ultimo_calc = calculos[0]  # El más reciente
+                    story.append(Spacer(1, 0.3*inch))
+                    story.append(Paragraph("ÚLTIMA EVALUACIÓN - INTERPRETACIÓN", subtitulo_style))
+
+                    riesgo = ultimo_calc[8]
+                    categoria = ultimo_calc[9]
+
+                    interpretacion = self.obtener_interpretacion_detallada(riesgo, categoria)
+                    story.append(Paragraph(interpretacion, styles['Normal']))
+
+                    # Recomendaciones
+                    story.append(Spacer(1, 0.2*inch))
+                    story.append(Paragraph("RECOMENDACIONES", subtitulo_style))
+                    recomendaciones = self.obtener_recomendaciones(categoria, ultimo_calc[4])
+                    story.append(Paragraph(recomendaciones, styles['Normal']))
+
+            else:
+                story.append(Paragraph("No se han registrado evaluaciones de riesgo para este paciente.",
+                                     styles['Normal']))
+
+            # Pie de página
+            story.append(Spacer(1, 0.5*inch))
+            story.append(Paragraph("_" * 80, styles['Normal']))
+            story.append(Spacer(1, 0.1*inch))
+
+            pie_texto = """
+            <para align=center>
+            <font size=8>
+            Este reporte fue generado automáticamente por el Sistema SCORE2 de Evaluación de Riesgo Cardiovascular.<br/>
+            Basado en las Guías ESC 2021 para la prevención de enfermedades cardiovasculares.<br/>
+            Unidad de Prevención Cardiometabólica - ISSUNNE Corrientes Capital<br/>
+            </font>
+            </para>
+            """
+            story.append(Paragraph(pie_texto, styles['Normal']))
+
+            # Generar PDF
+            doc.build(story)
+
+            messagebox.showinfo(
+                "Éxito",
+                f"Reporte PDF generado correctamente:\n\n{filename}\n\n"
+                f"Paciente: {paciente[1]} {paciente[2]}\n"
+                f"Cálculos incluidos: {len(calculos) if calculos else 0}"
+            )
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al generar el PDF:\n\n{str(e)}")
+            import traceback
+            traceback.print_exc()
+
+    def obtener_interpretacion_detallada(self, riesgo, categoria):
+        """Genera interpretación detallada para el PDF"""
+        if categoria == 'Bajo':
+            return f"""
+            El paciente presenta un riesgo BAJO ({riesgo}%) de sufrir un evento cardiovascular 
+            mortal o no mortal en los próximos 10 años. Este nivel de riesgo es favorable y sugiere 
+            que el paciente mantiene buenos hábitos de vida y control de factores de riesgo. Se 
+            recomienda mantener el estilo de vida saludable actual y realizar controles periódicos.
+            """
+        elif categoria == 'Moderado':
+            return f"""
+            El paciente presenta un riesgo MODERADO ({riesgo}%) de sufrir un evento cardiovascular 
+            en los próximos 10 años. Este nivel de riesgo indica la necesidad de intervención 
+            preventiva. Se recomienda modificación intensiva del estilo de vida, control regular de 
+            factores de riesgo y evaluación para tratamiento farmacológico según criterio médico.
+            """
+        else:  # Alto
+            return f"""
+            El paciente presenta un riesgo ALTO ({riesgo}%) de sufrir un evento cardiovascular en 
+            los próximos 10 años. Este nivel de riesgo requiere intervención inmediata y agresiva. 
+            Se recomienda tratamiento farmacológico intensivo, modificación urgente del estilo de 
+            vida, y seguimiento médico estrecho. El objetivo es reducir el riesgo mediante control 
+            óptimo de todos los factores modificables.
+            """
+
+    def obtener_recomendaciones(self, categoria, es_fumador):
+        """Genera recomendaciones específicas para el PDF"""
+        recomendaciones = []
+
+        if es_fumador:
+            recomendaciones.append("• <b>CESACIÓN TABÁQUICA URGENTE:</b> El tabaquismo es uno de los factores de riesgo más importantes y modificables. Se recomienda derivación a programa de cesación tabáquica.")
+
+        if categoria == 'Bajo':
+            recomendaciones.extend([
+                "• Mantener dieta saludable tipo mediterránea",
+                "• Actividad física regular (150 min/semana de intensidad moderada)",
+                "• Control anual de presión arterial y perfil lipídico",
+                "• Mantener peso saludable (IMC 20-25)"
+            ])
+        elif categoria == 'Moderado':
+            recomendaciones.extend([
+                "• Control de presión arterial objetivo <130/80 mmHg",
+                "• Objetivo LDL-C <100 mg/dL (considerar estatinas)",
+                "• Dieta estricta tipo mediterránea",
+                "• Actividad física supervisada 5 días/semana",
+                "• Reducción de peso si IMC >25",
+                "• Seguimiento trimestral"
+            ])
+        else:  # Alto
+            recomendaciones.extend([
+                "• <b>Control estricto de PA:</b> Objetivo <130/80 mmHg con tratamiento farmacológico",
+                "• <b>Terapia hipolipemiante intensiva:</b> Objetivo LDL-C <70 mg/dL",
+                "• Considerar terapia antiplaquetaria (según criterio médico)",
+                "• Dieta terapéutica supervisada por nutricionista",
+                "• Programa estructurado de ejercicio cardiovascular",
+                "• Control mensual hasta estabilización",
+                "• Derivación a cardiología para evaluación complementaria"
+            ])
+
+        return "<br/>".join(recomendaciones)
+
     def ver_paciente(self):
         """Muestra los detalles de un paciente"""
         seleccion = self.tree_pacientes.selection()
@@ -812,34 +1198,121 @@ class SCORE2App:
 
         item = self.tree_pacientes.item(seleccion[0])
         paciente_id = item['values'][0]
-        messagebox.showinfo("Detalles", f"Ver detalles del paciente ID: {paciente_id}")
+
+        # Obtener datos completos
+        paciente = self.db.obtener_paciente(paciente_id)
+        calculos = self.db.obtener_calculos_paciente(paciente_id)
+
+        # Crear ventana de detalles
+        detalle_window = tk.Toplevel(self.root)
+        detalle_window.title(f"Detalles del Paciente")
+        detalle_window.geometry("600x500")
+
+        # Frame con scroll
+        canvas = tk.Canvas(detalle_window)
+        scrollbar = ttk.Scrollbar(detalle_window, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Datos del paciente
+        ttk.Label(scrollable_frame, text=f"{paciente[1]} {paciente[2]}",
+                 font=('Segoe UI', 16, 'bold')).pack(pady=10)
+
+        info_frame = ttk.LabelFrame(scrollable_frame, text="Información Personal", padding=10)
+        info_frame.pack(fill='x', padx=20, pady=10)
+
+        ttk.Label(info_frame, text=f"DNI: {paciente[3] or 'No especificado'}").pack(anchor='w')
+        ttk.Label(info_frame, text=f"Fecha de nacimiento: {paciente[4] or 'No especificada'}").pack(anchor='w')
+        ttk.Label(info_frame, text=f"Sexo: {'Masculino' if paciente[5] == 'varon' else 'Femenino'}").pack(anchor='w')
+        ttk.Label(info_frame, text=f"Teléfono: {paciente[6] or 'No especificado'}").pack(anchor='w')
+        ttk.Label(info_frame, text=f"Email: {paciente[7] or 'No especificado'}").pack(anchor='w')
+
+        # Resumen de riesgo
+        if calculos:
+            resumen_frame = ttk.LabelFrame(scrollable_frame, text="Última Evaluación", padding=10)
+            resumen_frame.pack(fill='x', padx=20, pady=10)
+
+            ultimo = calculos[0]
+            ttk.Label(resumen_frame, text=f"Fecha: {ultimo[2]}").pack(anchor='w')
+            ttk.Label(resumen_frame, text=f"Riesgo: {ultimo[8]}%",
+                     font=('Segoe UI', 14, 'bold')).pack(anchor='w')
+            ttk.Label(resumen_frame, text=f"Categoría: {ultimo[9]}").pack(anchor='w')
+            ttk.Label(resumen_frame, text=f"Total de evaluaciones: {len(calculos)}").pack(anchor='w')
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
 
     def editar_paciente(self):
         """Permite editar un paciente"""
-        messagebox.showinfo("Info", "Función en desarrollo")
+        seleccion = self.tree_pacientes.selection()
+        if not seleccion:
+            messagebox.showwarning("Advertencia", "Seleccione un paciente")
+            return
+
+        item = self.tree_pacientes.item(seleccion[0])
+        paciente_id = item['values'][0]
+
+        # Por ahora solo mostramos mensaje
+        messagebox.showinfo("Editar Paciente",
+                           "Función de edición en desarrollo.\n"
+                           "Por ahora puede crear un nuevo paciente con los datos actualizados.")
+
 
     def eliminar_paciente(self):
-        """Elimina un paciente (lógicamente)"""
+        """Elimina un paciente y actualiza la vista"""
         seleccion = self.tree_pacientes.selection()
         if not seleccion:
             messagebox.showwarning("Advertencia", "Por favor seleccione un paciente de la lista")
             return
 
-        respuesta = messagebox.askyesno(
-            "Confirmar Eliminación",
-            "¿Está seguro de que desea eliminar este paciente?\n\n"
-            "Nota: La eliminación es lógica (el paciente se marca como inactivo pero no se borra de la base de datos)"
+        item = self.tree_pacientes.item(seleccion[0])
+        paciente_id = item['values'][0]
+        nombre_paciente = f"{item['values'][1]}, {item['values'][2]}"
+
+        respuesta = messagebox.askyesnocancel(
+            "Eliminar Paciente",
+            f"¿Cómo desea eliminar al paciente '{nombre_paciente}'?\n\n"
+            f"• SÍ: Eliminación lógica (ocultar de la lista)\n"
+            f"• NO: Eliminación física (borrar completamente)\n"
+            f"• CANCELAR: No eliminar",
+            icon='question'
         )
 
-        if respuesta:
-            item = self.tree_pacientes.item(seleccion[0])
-            paciente_id = item['values'][0]
-
+        if respuesta is None:  # Cancel
+            return
+        elif respuesta:  # Yes - Eliminación lógica
             if self.db.eliminar_paciente(paciente_id, soft_delete=True):
-                messagebox.showinfo("Éxito", "Paciente eliminado correctamente")
+                messagebox.showinfo("Éxito",
+                    "Paciente ocultado correctamente.\n"
+                    "El paciente ya no aparecerá en la lista pero sus datos se conservan en la base de datos.")
                 self.actualizar_lista_pacientes()
-            else:
-                messagebox.showerror("Error", "No se pudo eliminar el paciente")
+                self.cargar_historial()  # Actualizar historial también
+        else:  # No - Eliminación física
+            confirmacion = messagebox.askyesno(
+                "⚠️ Confirmación Final",
+                "¿Está COMPLETAMENTE SEGURO?\n\n"
+                "Esta acción eliminará PERMANENTEMENTE:\n"
+                "• Datos del paciente\n"
+                "• Todos sus cálculos de riesgo\n"
+                "• Todo su historial\n\n"
+                "Esta operación NO SE PUEDE DESHACER.",
+                icon='warning'
+            )
+
+            if confirmacion:
+                if self.db.eliminar_paciente(paciente_id, soft_delete=False):
+                    messagebox.showinfo("Eliminado", "Paciente eliminado permanentemente de la base de datos.")
+                    self.actualizar_lista_pacientes()
+                    self.cargar_historial()
+                else:
+                    messagebox.showerror("Error", "No se pudo eliminar el paciente")
 
     # ========================================================================
     # MÉTODOS DE ESTADÍSTICAS
