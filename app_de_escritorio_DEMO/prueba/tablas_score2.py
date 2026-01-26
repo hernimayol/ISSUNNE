@@ -672,10 +672,24 @@ def calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region='moderado', int
             valor_bajo = tabla[rango_edad][rango_pas][indice_bajo]
             valor_alto = tabla[rango_edad][rango_pas][indice_alto]
             riesgo = int(valor_bajo + (valor_alto - valor_bajo) * factor)
+        # else:
+        #     indice_col = obtener_indice_colesterol(col_no_hdl)
+        #     if indice_col is None:
+        #         return {'error': 'Colesterol no-HDL fuera de rango (3.0-7.0 mmol/L)'}
+        #     riesgo = tabla[rango_edad][rango_pas][indice_col]
+
         else:
             indice_col = obtener_indice_colesterol(col_no_hdl)
+
+            # Si está fuera de rango, usar el valor más cercano (extrapolación)
             if indice_col is None:
-                return {'error': 'Colesterol no-HDL fuera de rango (3.0-7.0 mmol/L)'}
+                if col_no_hdl < 3.0:
+                    indice_col = 0  # Usar el valor mínimo
+                    print(f"   Usando valor mínimo de la tabla (col no-HDL < 3.0)")
+                elif col_no_hdl > 7.0:
+                    indice_col = 3  # Usar el valor máximo
+                    print(f"   Usando valor máximo de la tabla (col no-HDL > 7.0)")
+
             riesgo = tabla[rango_edad][rango_pas][indice_col]
 
     except (KeyError, IndexError):

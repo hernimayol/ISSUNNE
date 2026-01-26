@@ -2,6 +2,7 @@
 main.py
 Aplicación de escritorio para cálculo de riesgo cardiovascular SCORE2/SCORE2-OP
 Unidad de Prevención Cardiometabólica - Corrientes Capital
+MODIFICADO: Colesterol únicamente en mg/dl
 """
 
 import tkinter as tk
@@ -232,7 +233,7 @@ class SCORE2App:
         ttk.Label(pas_frame, text="mmHg", foreground='gray').pack(side='left', padx=(5, 0))
         row += 1
 
-        # Total Cholesterol con selector de unidades
+        # Total Cholesterol - SOLO mg/dl
         ttk.Label(left_frame, text="Colesterol Total *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         col_total_frame = ttk.Frame(left_frame)
@@ -240,34 +241,27 @@ class SCORE2App:
 
         self.var_col_total = tk.StringVar()
         ttk.Entry(col_total_frame, textvariable=self.var_col_total, width=10).pack(side='left')
-
-        self.var_col_total_unidad = tk.StringVar(value='mmol/L')
-        ttk.Radiobutton(col_total_frame, text="mmol/L",
-                       variable=self.var_col_total_unidad,
-                       value='mmol/L').pack(side='left', padx=(10, 0))
-        ttk.Radiobutton(col_total_frame, text="mg/dl",
-                       variable=self.var_col_total_unidad,
-                       value='mg/dl').pack(side='left')
+        ttk.Label(col_total_frame, text="mg/dl", foreground='gray').pack(side='left', padx=(5, 0))
         row += 1
 
-        # HDL-Cholesterol
+        # HDL-Cholesterol - SOLO mg/dl
         ttk.Label(left_frame, text="Colesterol-HDL *",
                  foreground='red').grid(row=row, column=0, sticky='w', pady=5)
         hdl_frame = ttk.Frame(left_frame)
         hdl_frame.grid(row=row, column=1, sticky='w', pady=5)
         self.var_hdl = tk.StringVar()
         ttk.Entry(hdl_frame, textvariable=self.var_hdl, width=10).pack(side='left')
-        ttk.Label(hdl_frame, text="mmol/L", foreground='gray').pack(side='left', padx=(5, 0))
+        ttk.Label(hdl_frame, text="mg/dl", foreground='gray').pack(side='left', padx=(5, 0))
         row += 1
 
-        # LDL-Cholesterol (opcional)
+        # LDL-Cholesterol (opcional) - SOLO mg/dl
         ttk.Label(left_frame, text="Colesterol-LDL",
                  foreground='gray').grid(row=row, column=0, sticky='w', pady=5)
         ldl_frame = ttk.Frame(left_frame)
         ldl_frame.grid(row=row, column=1, sticky='w', pady=5)
         self.var_ldl = tk.StringVar()
         ttk.Entry(ldl_frame, textvariable=self.var_ldl, width=10).pack(side='left')
-        ttk.Label(ldl_frame, text="mmol/L", foreground='gray').pack(side='left', padx=(5, 0))
+        ttk.Label(ldl_frame, text="mg/dl", foreground='gray').pack(side='left', padx=(5, 0))
         row += 1
 
         # Current Smoker
@@ -315,7 +309,7 @@ class SCORE2App:
                 bg='#e3f2fd', font=('Segoe UI', 9, 'bold'),
                 foreground='#1976d2').pack(anchor='w', padx=10, pady=(5, 0))
         tk.Label(info_frame,
-                text="no-HDL = Total Cholesterol - HDL",
+                text="no-HDL = Total Cholesterol - HDL (en mg/dl)",
                 bg='#e3f2fd', font=('Segoe UI', 8, 'italic'),
                 foreground='#424242').pack(anchor='w', padx=20, pady=(0, 5))
         row += 1
@@ -386,8 +380,12 @@ class SCORE2App:
         search_frame.pack(fill='x', padx=20, pady=10)
 
         ttk.Label(search_frame, text="Buscar:", font=('Segoe UI', 10)).pack(side='left')
+        # self.var_buscar = tk.StringVar()
+        # self.var_buscar.trace('w', lambda *args: self.actualizar_lista_pacientes())
+        # ttk.Entry(search_frame, textvariable=self.var_buscar, width=30).pack(
+        #     side='left', padx=10)
         self.var_buscar = tk.StringVar()
-        self.var_buscar.trace('w', lambda *args: self.actualizar_lista_pacientes())
+        self.var_buscar.trace_add('write', lambda *args: self.actualizar_lista_pacientes())
         ttk.Entry(search_frame, textvariable=self.var_buscar, width=30).pack(
             side='left', padx=10)
 
@@ -632,33 +630,40 @@ class SCORE2App:
                 messagebox.showerror("Error", "Por favor ingrese el HDL-Cholesterol")
                 return
 
-            # Obtener valores
+            # Obtener valores EN MG/DL
             pas = int(self.var_pas.get())
-            col_total = float(self.var_col_total.get())
-            hdl = float(self.var_hdl.get())
+            col_total_mgdl = float(self.var_col_total.get())
+            hdl_mgdl = float(self.var_hdl.get())
             sexo = self.var_sexo.get()
             fumador = self.var_fumador.get()
-
-            # IMPORTANTE: Leer región AQUÍ, no antes
             region = self.var_region.get()
 
-            # Convertir colesterol total a mmol/L si está en mg/dl
-            if self.var_col_total_unidad.get() == 'mg/dl':
-                col_total = col_total / 38.67
+            # CONVERTIR mg/dl a mmol/L para los cálculos internos
+            col_total_mmol = col_total_mgdl / 38.67
+            hdl_mmol = hdl_mgdl / 38.67
 
-            # Calcular colesterol no-HDL (como HeartScore)
-            col_no_hdl = col_total - hdl
+            # Calcular colesterol no-HDL en mmol/L (para las tablas)
+            col_no_hdl_mmol = col_total_mmol - hdl_mmol
 
-            # Validar rangos
-            if col_no_hdl < 3.0 or col_no_hdl > 7.0:
-                messagebox.showwarning(
-                    "Advertencia",
-                    f"El colesterol no-HDL calculado ({col_no_hdl:.2f} mmol/L) está fuera del rango válido (3.0-7.0).\n\n"
-                    f"Colesterol Total: {col_total:.2f} mmol/L\n"
-                    f"HDL: {hdl:.2f} mmol/L\n"
-                    f"No-HDL = Total - HDL = {col_no_hdl:.2f} mmol/L"
-                )
-                # Continuar de todas formas para mostrar el cálculo
+            # Calcular también en mg/dl (para mostrar)
+            col_no_hdl_mgdl = col_total_mgdl - hdl_mgdl
+
+            # # Validar rangos en mmol/L
+            # if col_no_hdl_mmol < 3.0 or col_no_hdl_mmol > 7.0:
+            #     messagebox.showwarning(
+            #         "Advertencia",
+            #         f"El colesterol no-HDL calculado ({col_no_hdl_mgdl:.1f} mg/dl) está fuera del rango válido.\n\n"
+            #         f"Colesterol Total: {col_total_mgdl:.1f} mg/dl\n"
+            #         f"HDL: {hdl_mgdl:.1f} mg/dl\n"
+            #         f"No-HDL = Total - HDL = {col_no_hdl_mgdl:.1f} mg/dl\n\n"
+            #         f"Rango válido: 116-271 mg/dl (3.0-7.0 mmol/L)"
+            #     )
+
+            # Validar rangos en mmol/L (solo advertencia, no bloquea)
+            if col_no_hdl_mmol < 3.0 or col_no_hdl_mmol > 7.0:
+                # Solo mostrar advertencia pero permitir continuar
+                print(f"⚠️ ADVERTENCIA: Colesterol no-HDL ({col_no_hdl_mgdl:.1f} mg/dl) fuera del rango estándar.")
+                print(f"   Se usará extrapolación como en HeartScore.")
 
             # Debug: Mostrar valores en consola
             print(f"\n{'='*60}")
@@ -669,25 +674,23 @@ class SCORE2App:
             print(f"Sexo: {sexo}")
             print(f"Fumador: {'Sí' if fumador else 'No'}")
             print(f"PAS: {pas} mmHg")
-            print(f"Colesterol Total: {col_total:.2f} mmol/L")
-            print(f"HDL-Cholesterol: {hdl:.2f} mmol/L")
-            print(f"Colesterol no-HDL (calculado): {col_no_hdl:.2f} mmol/L")
-
-            # IMPORTANTE: Obtener región del combo DESPUÉS de la conversión
-            region = self.var_region.get()
+            print(f"Colesterol Total: {col_total_mgdl:.1f} mg/dl ({col_total_mmol:.2f} mmol/L)")
+            print(f"HDL-Cholesterol: {hdl_mgdl:.1f} mg/dl ({hdl_mmol:.2f} mmol/L)")
+            print(f"Colesterol no-HDL: {col_no_hdl_mgdl:.1f} mg/dl ({col_no_hdl_mmol:.2f} mmol/L)")
             print(f"Región seleccionada: {region}")
             print(f"{'='*60}")
 
-            # Calcular riesgo
-            resultado = calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl, region)
+            # Calcular riesgo usando valores en mmol/L
+            resultado = calcular_riesgo(edad, sexo, fumador, pas, col_no_hdl_mmol, region)
 
-            # Agregar información adicional al resultado
+            # ✅ IMPORTANTE: Agregar información adicional al resultado
             resultado['edad'] = edad
-            resultado['col_total'] = col_total
-            resultado['hdl'] = hdl
-            resultado['col_no_hdl'] = col_no_hdl
+            resultado['col_total_mgdl'] = col_total_mgdl
+            resultado['hdl_mgdl'] = hdl_mgdl
+            resultado['col_no_hdl_mgdl'] = col_no_hdl_mgdl
+            resultado['col_no_hdl_mmol'] = col_no_hdl_mmol
 
-            print(f"RESULTADO: {resultado}")
+            print(f"RESULTADO completo: {resultado}")
             print(f"{'='*60}\n")
 
             if 'error' in resultado:
@@ -752,19 +755,19 @@ class SCORE2App:
         ttk.Label(detalles_frame, text=f"Región: {resultado['region']}",
                  font=('Segoe UI', 10)).pack(anchor='w')
 
-        # Mostrar valores de colesterol
-        if 'col_total' in resultado:
+        # Mostrar valores de colesterol EN MG/DL
+        if 'col_total_mgdl' in resultado:
             ttk.Separator(detalles_frame, orient='horizontal').pack(fill='x', pady=10)
             ttk.Label(detalles_frame, text="Valores de Colesterol:",
                      font=('Segoe UI', 10, 'bold')).pack(anchor='w')
             ttk.Label(detalles_frame,
-                     text=f"• Total: {resultado['col_total']:.2f} mmol/L",
+                     text=f"• Total: {resultado['col_total_mgdl']:.1f} mg/dl",
                      font=('Segoe UI', 9)).pack(anchor='w', padx=(10, 0))
             ttk.Label(detalles_frame,
-                     text=f"• HDL: {resultado['hdl']:.2f} mmol/L",
+                     text=f"• HDL: {resultado['hdl_mgdl']:.1f} mg/dl",
                      font=('Segoe UI', 9)).pack(anchor='w', padx=(10, 0))
             ttk.Label(detalles_frame,
-                     text=f"• no-HDL: {resultado['col_no_hdl']:.2f} mmol/L",
+                     text=f"• no-HDL: {resultado['col_no_hdl_mgdl']:.1f} mg/dl",
                      font=('Segoe UI', 9), foreground='blue').pack(anchor='w', padx=(10, 0))
 
         # Interpretación
@@ -803,15 +806,15 @@ class SCORE2App:
                 'edad': self.resultado_actual.get('edad'),
                 'fumador': self.var_fumador.get(),
                 'pas': int(self.var_pas.get()),
-                'colesterol_no_hdl': self.resultado_actual.get('col_no_hdl'),
+                'colesterol_no_hdl': self.resultado_actual.get('col_no_hdl_mmol'),  # Guardar en mmol/L
                 'region': self.var_region.get(),
                 'riesgo_porcentaje': self.resultado_actual['riesgo'],
                 'categoria': self.resultado_actual['categoria'],
                 'score_type': self.resultado_actual['score_type'],
                 'peso': float(self.var_peso.get()) if self.var_peso.get() else None,
                 'altura': float(self.var_altura.get()) if self.var_altura.get() else None,
-                'colesterol_total': self.resultado_actual.get('col_total'),
-                'hdl': self.resultado_actual.get('hdl'),
+                'colesterol_total': self.resultado_actual.get('col_total_mgdl'),  # Guardar en mg/dl
+                'hdl': self.resultado_actual.get('hdl_mgdl'),  # Guardar en mg/dl
                 'ldl': float(self.var_ldl.get()) if self.var_ldl.get() else None
             }
 
@@ -824,7 +827,7 @@ class SCORE2App:
             if calculo_id:
                 messagebox.showinfo("Éxito", "Cálculo guardado correctamente")
                 self.actualizar_lista_pacientes()
-                self.cargar_historial()  # Actualizar historial automáticamente
+                self.cargar_historial()
             else:
                 messagebox.showerror("Error", "No se pudo guardar el cálculo")
 
@@ -1017,22 +1020,22 @@ class SCORE2App:
 
             if calculos:
                 # Encabezados de la tabla
-                datos_calculos = [['Fecha', 'Edad', 'Fumador', 'PAS\n(mmHg)', 'Col no-HDL\n(mmol/L)',
+                datos_calculos = [['Fecha', 'Edad', 'Fumador', 'PAS\n(mmHg)', 'Col no-HDL\n(mg/dl)',
                                   'Riesgo\n(%)', 'Categoría', 'Método', 'Región']]
 
                 for calc in calculos:
-                    # calc: (id, paciente_id, fecha, edad, fumador, pas, col_no_hdl, region,
-                    #        riesgo_%, categoria, score_type, peso, altura, imc, ...)
-                    fecha = calc[2][:16] if calc[2] else ''  # Solo fecha y hora sin segundos
+                    fecha = calc[2][:16] if calc[2] else ''
                     fumador = 'Sí' if calc[4] else 'No'
-                    col_no_hdl = f"{calc[6]:.1f}" if calc[6] else ''
+                    # calc[6] está en mmol/L, convertir a mg/dl para el reporte
+                    col_no_hdl_mgdl = calc[6] * 38.67 if calc[6] else 0
+                    col_no_hdl_texto = f"{col_no_hdl_mgdl:.1f}" if calc[6] else ''
 
                     datos_calculos.append([
                         fecha,
                         str(calc[3]),
                         fumador,
                         str(calc[5]),
-                        col_no_hdl,
+                        col_no_hdl_texto,
                         f"{calc[8]}%",
                         calc[9],
                         calc[10],
@@ -1077,7 +1080,7 @@ class SCORE2App:
 
                 # Último cálculo - Interpretación
                 if calculos:
-                    ultimo_calc = calculos[0]  # El más reciente
+                    ultimo_calc = calculos[0]
                     story.append(Spacer(1, 0.3*inch))
                     story.append(Paragraph("ÚLTIMA EVALUACIÓN - INTERPRETACIÓN", subtitulo_style))
 
@@ -1264,7 +1267,6 @@ class SCORE2App:
                            "Función de edición en desarrollo.\n"
                            "Por ahora puede crear un nuevo paciente con los datos actualizados.")
 
-
     def eliminar_paciente(self):
         """Elimina un paciente y actualiza la vista"""
         seleccion = self.tree_pacientes.selection()
@@ -1293,7 +1295,7 @@ class SCORE2App:
                     "Paciente ocultado correctamente.\n"
                     "El paciente ya no aparecerá en la lista pero sus datos se conservan en la base de datos.")
                 self.actualizar_lista_pacientes()
-                self.cargar_historial()  # Actualizar historial también
+                self.cargar_historial()
         else:  # No - Eliminación física
             confirmacion = messagebox.askyesno(
                 "⚠️ Confirmación Final",
@@ -1347,7 +1349,6 @@ class SCORE2App:
         card = tk.Frame(parent, bg=color)
         card.grid(row=posicion//3, column=posicion%3, padx=10, pady=10, sticky='ew')
 
-        # Agregar padding interno con pack
         tk.Label(card, text=str(valor), font=('Segoe UI', 24, 'bold'),
                 bg=color, fg='white').pack(pady=(15, 5), padx=20)
         tk.Label(card, text=titulo, font=('Segoe UI', 10),
@@ -1560,7 +1561,10 @@ class NuevoPacienteDialog:
 def main():
     root = tk.Tk()
     app = SCORE2App(root)
-    root.mainloop()
+    try:
+        root.mainloop()
+    except KeyboardInterrupt:
+        print("\n✓ Aplicación cerrada por el usuario")
 
 if __name__ == "__main__":
     main()
